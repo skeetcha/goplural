@@ -22,20 +22,32 @@ A desktop chat application designed specifically for plural systems, featuring P
 ### Installation
 
 1. **Clone or download** this repository
-2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   https://github.com/Ktiseos-Nyx/plural_chat.git
    ```
-3. **Run the application:**
+3. **Install:**
    ```bash
-   python main.py
+     cd plural_chat
+     pip install .
+   ```
+4. **Run the application:**
+   ```bash
+   plural-chat
+   ```
+#### Developer Mode Options
+
+   ```bash
+  git clone https://github.com/Ktiseos-Nyx/plural_chat.git
+  cd plural_chat
+  pip install -e .
+  plural-chat
    ```
 
 ### First Time Setup
 
 1. **Add Members** - Use the Settings → Members tab to add your system members
 2. **Set Avatars** - Add avatar images for visual identification
-3. **PluralKit Sync** (Optional) - Import your existing PK system data
+3. **PluralKit Sync** (Optional) - Import your existing PK system data via PK's API or via Json export via pk;export on Discord.
 4. **Choose Theme** - Pick from 15+ modern themes in Settings
 
 ## 🎯 Proxy Detection
@@ -45,6 +57,9 @@ If you've imported from PluralKit or set up proxy tags, the app will automatical
 - Type `member: hello there` → Auto-selects "member" and sends "hello there"
 - Visual feedback shows when proxy is detected
 - Clean messages without proxy tags in chat history
+
+### Future Foward Issue
+Not everyone uses member: proxy - so being that this was developed in less than 12 hours, it'd be amazing if anyone would want to help out in robustish level fix this!
 
 ## 🔧 PluralKit Integration
 
@@ -142,6 +157,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [PluralKit](https://pluralkit.me) - The bot that inspired this project
 - [ttkbootstrap](https://ttkbootstrap.readthedocs.io) - Modern tkinter themes
 - [Support us](https://ko-fi.com/duskfallcrew) - Help keep development going
+- [Ktiseos Nyx](https://discord.gg/HhBSvM9gBY) - Development & Ai Discord which is Plural Friendly! 
+- [Earth & Dusk Media](https://discord.gg/5t2kYxt7An) our Twitch & Media Discord, which both of our discords have PK enabled for proxying!
 
 ---
 
