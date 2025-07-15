@@ -12,6 +12,13 @@ A desktop chat application designed specifically for plural systems, featuring P
 - **📤 Export/Import** - Share system configurations with other plural folks
 - **🖼️ Avatar Support** - Display member avatars in chat
 
+## ⚠️ Known Issues
+
+- **PluralKit Import**: Currently causes UI freezing during large imports. We're
+   working on an async solution. For now, use smaller batches or be patient during
+   imports.
+- **Fix in progress**: Async/threading improvements coming in the next 24 hours!
+
 ## 🚀 Quick Start
 
 ### Prerequisites
