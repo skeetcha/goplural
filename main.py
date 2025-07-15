@@ -63,6 +63,12 @@ class PluralChat:
             fallback_theme = 'superhero'
         else:
             fallback_theme = theme
+        # Hide any default tkinter root window
+        import tkinter as tk_root
+        default_root = tk_root._default_root
+        if default_root:
+            default_root.withdraw()
+            
         try:
             # Always create window with a known theme first
             self.root = ttk.Window(
@@ -78,6 +84,19 @@ class PluralChat:
                 themename='superhero',
                 size=(900, 700)
             )
+        
+        # Set minimum size and center the window
+        self.root.minsize(800, 600)
+        self.root.geometry("900x700")
+        
+        # Center the window on screen
+        self.root.update_idletasks()
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+        
         # Hide window initially while we set it up
         self.root.withdraw()
         

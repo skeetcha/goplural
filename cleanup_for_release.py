@@ -118,9 +118,78 @@ def cleanup_temp_files():
         print("  ℹ️ No temporary files found")
 
 def create_sample_data():
-    """Skip sample data creation - databases will be fresh"""
-    print("👤 Skipping sample data creation...")
-    print("  ℹ️ Databases deleted - will be created fresh on first app run")
+    """Create sample members A and B for demo"""
+    print("👤 Creating sample demo members...")
+    
+    # Run the app briefly to create fresh databases
+    import subprocess
+    import time
+    
+    try:
+        # Start the app briefly to initialize databases
+        process = subprocess.Popen(['python', 'main.py'], 
+                                 stdout=subprocess.PIPE, 
+                                 stderr=subprocess.PIPE)
+        time.sleep(3)  # Give it time to create databases
+        process.terminate()
+        process.wait()
+        
+        # Now add sample data
+        if os.path.exists('system.db'):
+            conn = sqlite3.connect('system.db')
+            cursor = conn.cursor()
+            
+            # Add Member A
+            cursor.execute("""
+                INSERT INTO members (name, pronouns, color, avatar, description)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                "Member A",
+                "they/them", 
+                "#7745d1",
+                "avatars/default_avatar.png",
+                "This is a sample member for demonstration. You can edit or delete this member and add your own!"
+            ))
+            member_a_id = cursor.lastrowid
+            
+            # Add Member B  
+            cursor.execute("""
+                INSERT INTO members (name, pronouns, color, avatar, description)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                "Member B",
+                "she/her",
+                "#ba1ca1", 
+                "avatars/default_avatar.png",
+                "Another sample member for demonstration. Feel free to customize or replace with your own members!"
+            ))
+            member_b_id = cursor.lastrowid
+            
+            # Add welcome messages
+            cursor.execute("""
+                INSERT INTO messages (member_id, content, timestamp)
+                VALUES (?, ?, datetime('now', '-2 minutes'))
+            """, (
+                member_a_id,
+                "Hi! Welcome to Plural Chat! This is a sample message from Member A."
+            ))
+            
+            cursor.execute("""
+                INSERT INTO messages (member_id, content, timestamp) 
+                VALUES (?, ?, datetime('now', '-1 minute'))
+            """, (
+                member_b_id,
+                "Hello there! I'm Member B. You can delete us and add your own system members through Settings > Members."
+            ))
+            
+            conn.commit()
+            conn.close()
+            print("  ✅ Added sample members A & B with welcome messages")
+        else:
+            print("  ⚠️ Could not create sample data - database not found")
+            
+    except Exception as e:
+        print(f"  ⚠️ Could not create sample data: {e}")
 
 def main():
     """Main cleanup function"""
