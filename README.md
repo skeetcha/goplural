@@ -18,6 +18,8 @@ A desktop chat application designed specifically for plural systems, featuring P
    working on an async solution. For now, use smaller batches or be patient during
    imports.
 - **Fix in progress**: Async/threading improvements coming in the next 24 hours!
+- **Themes not applying properly, UI defaulting to darkmode**
+- **Comhra of duskfall demands Criss sleeps so we'll do this tomorrow**
 
 ## 🚀 Quick Start
 
