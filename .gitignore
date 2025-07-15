@@ -1,0 +1,83 @@
+# Databases - user data
+*.db
+*.sqlite
+*.sqlite3
+
+# Personal data directories
+avatars/*
+!avatars/default_avatar.png
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Export files and personal data
+*.json
+exports/
+chat_history.*
+messages.*
+history.*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# User configuration that shouldn't be shared
+config.ini
+settings.conf
+*.secret
+*.key
+
+# Test files
+test_data/
+temp_test_*
