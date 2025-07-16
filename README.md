@@ -154,6 +154,8 @@ We welcome contributions from the plural community! Whether it's:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+For third-party components and attributions, see [NOTICES.md](NOTICES.md).
+
 ## 💝 Credits
 
 - **Created by:** Duskfall Portal Crew

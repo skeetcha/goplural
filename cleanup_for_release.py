@@ -141,7 +141,7 @@ def create_sample_data():
             
             # Add Member A
             cursor.execute("""
-                INSERT INTO members (name, pronouns, color, avatar, description)
+                INSERT INTO members (name, pronouns, color, avatar_path, description)
                 VALUES (?, ?, ?, ?, ?)
             """, (
                 "Member A",
@@ -154,7 +154,7 @@ def create_sample_data():
             
             # Add Member B  
             cursor.execute("""
-                INSERT INTO members (name, pronouns, color, avatar, description)
+                INSERT INTO members (name, pronouns, color, avatar_path, description)
                 VALUES (?, ?, ?, ?, ?)
             """, (
                 "Member B",

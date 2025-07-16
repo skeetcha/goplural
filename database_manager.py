@@ -135,9 +135,9 @@ class AppDatabase:
     
     def store_api_token(self, service: str, token: str):
         """Store an API token (properly encrypted)"""
-        # Validate token format for known services
-        if service == "pluralkit" and not token.startswith("pk."):
-            raise ValueError("Invalid PluralKit token format")
+        # Basic validation - just check it's not empty
+        if not token or not token.strip():
+            raise ValueError("Token cannot be empty")
         
         encrypted_token = self._encrypt_token(token)
         with sqlite3.connect(self.db_path) as conn:

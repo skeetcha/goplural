@@ -1,6 +1,8 @@
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 
 class MemberManager(ttk.Frame):
     def __init__(self, parent_frame, main_app):

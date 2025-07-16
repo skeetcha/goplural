@@ -5,6 +5,8 @@ from ttkbootstrap.constants import *
 import webbrowser
 import logging
 from logging.handlers import RotatingFileHandler
+import os
+from PIL import Image, ImageTk
 
 
 class AboutDialog:
@@ -17,9 +19,9 @@ class AboutDialog:
         
     def show(self):
         """Show the About dialog"""
-        self.dialog = tk.Toplevel(self.parent)
+        self.dialog = ttk.Toplevel(self.parent)
         self.dialog.title("About Plural Chat")
-        self.dialog.geometry("600x500")
+        self.dialog.geometry("600x650")
         self.dialog.resizable(False, False)
         self.dialog.transient(self.parent)
         self.dialog.grab_set()
@@ -27,8 +29,8 @@ class AboutDialog:
         # Center the dialog
         self.dialog.update_idletasks()
         x = (self.dialog.winfo_screenwidth() // 2) - (600 // 2)
-        y = (self.dialog.winfo_screenheight() // 2) - (500 // 2)
-        self.dialog.geometry(f"600x500+{x}+{y}")
+        y = (self.dialog.winfo_screenheight() // 2) - (650 // 2)
+        self.dialog.geometry(f"600x650+{x}+{y}")
         
         self.setup_ui()
         
@@ -46,7 +48,7 @@ class AboutDialog:
         title_label.pack()
         
         version_label = ttk.Label(title_frame, text="Version 0.1.0", 
-                                 font=("Arial", 12), foreground="gray")
+                                 font=("Arial", 12), bootstyle="secondary")
         version_label.pack(pady=(5, 0))
         
         # Description
@@ -56,6 +58,7 @@ Features include:
 • Local chat with member switching
 • PluralKit integration and sync
 • Proxy detection and auto-switching
+• Personal diary system for private thoughts
 • SQLite database for performance
 • Modern themes via ttkbootstrap
 • Export/import system data"""
@@ -69,10 +72,14 @@ Features include:
         tech_frame.pack(fill=X, pady=(0, 20))
         
         tech_text = """• Python 3.8+ 🐍
-• ttkbootstrap - Modern UI themes
-• SQLite - Fast local database
-• Pillow - Image processing
-• Requests - PluralKit API integration"""
+• ttkbootstrap - Modern UI themes with full customization
+• SQLite - Lightning-fast local database
+• Pillow - Advanced image processing & WebP compression
+• Requests - PluralKit API integration
+• Aria2 - Ultra-fast parallel avatar downloading
+• Modular UI architecture - Clean component separation
+• Subprocess workers - Non-blocking background operations
+• Advanced theme management - OS-independent styling"""
         
         tech_label = ttk.Label(tech_frame, text=tech_text, 
                               font=("Arial", 10), justify=LEFT)
@@ -82,13 +89,13 @@ Features include:
         credits_frame = ttk.LabelFrame(main_frame, text="Credits", padding=15)
         credits_frame.pack(fill=X, pady=(0, 20))
         
-        credits_text = """Created by: Duskfall Portal Crew
+        credits_text = """Created by: Duskfallcrew aka The Duskfall Portal Crew, of Ktiseos Nyx
         
 Special thanks to:
 • PluralKit team for the amazing API
 • ttkbootstrap developers for beautiful themes
-• The plural community for inspiration and feedback
-• Default avatar icon by Vecteezy"""
+• Vecteezy for the default avatar
+• The Plural Community for its support"""
         
         credits_label = ttk.Label(credits_frame, text=credits_text, 
                                  font=("Arial", 10), justify=LEFT)
@@ -106,9 +113,8 @@ Special thanks to:
                   command=lambda: self.open_url("https://github.com/your-repo/plural-chat"), 
                   bootstyle="secondary-outline").pack(side=LEFT, padx=(0, 10))
         
-        ttk.Button(links_frame, text="☕ Support", 
-                  command=lambda: self.open_url("https://ko-fi.com/duskfallcrew"), 
-                  bootstyle="warning-outline").pack(side=LEFT)
+        # Ko-fi button with logo
+        self.create_kofi_button(links_frame)
 
         ttk.Button(links_frame, text="Default Avatar Attribution", 
                   command=lambda: self.open_url("https://www.vecteezy.com/free-png/default-avatar"), 
@@ -119,10 +125,10 @@ Special thanks to:
         license_frame.pack(fill=X, pady=(0, 20))
         
         license_text = """Released under the MIT License
-Copyright © 2025 Duskfall Portal Crew"""
+Copyright © 2025 Duskfallcrew aka The Duskfall Portal Crew, of Ktiseos Nyx"""
         
         license_label = ttk.Label(license_frame, text=license_text, 
-                                 font=("Arial", 9), foreground="gray")
+                                 font=("Arial", 9), bootstyle="secondary")
         license_label.pack()
         
         # Close button
@@ -131,6 +137,54 @@ Copyright © 2025 Duskfall Portal Crew"""
         
         ttk.Button(close_frame, text="Close", command=self.close_dialog, 
                   bootstyle="primary").pack(pady=(10, 0))
+        
+    def create_kofi_button(self, parent_frame):
+        """Create Ko-fi support button with logo"""
+        try:
+            # Load Ko-fi logo
+            kofi_logo_path = os.path.join(os.path.dirname(__file__), "kofi_logo.webp")
+            print(f"🔍 Looking for Ko-fi logo at: {kofi_logo_path}")
+            print(f"🔍 Logo exists: {os.path.exists(kofi_logo_path)}")
+            
+            if os.path.exists(kofi_logo_path):
+                # Load and resize the Ko-fi logo
+                kofi_image = Image.open(kofi_logo_path)
+                print(f"🎨 Original logo size: {kofi_image.size}")
+                
+                # Resize to button-appropriate size (bigger for visibility)
+                kofi_image = kofi_image.resize((80, 26), Image.Resampling.LANCZOS)
+                kofi_photo = ImageTk.PhotoImage(kofi_image)
+                print("✅ Ko-fi logo loaded successfully")
+                
+                # Create button with logo
+                kofi_button = ttk.Button(
+                    parent_frame, 
+                    image=kofi_photo,
+                    text="  Support on Ko-fi",
+                    compound=LEFT,
+                    command=lambda: self.open_url("https://ko-fi.com/duskfallcrew/"),
+                    bootstyle="warning"
+                )
+                kofi_button.pack(side=LEFT, padx=(0, 10))
+                print("✅ Ko-fi button created and packed")
+                
+                # Keep reference to prevent garbage collection
+                kofi_button.image = kofi_photo
+                
+            else:
+                print("⚠️ Ko-fi logo not found, using text-only button")
+                # Fallback to text-only button if logo not found
+                ttk.Button(parent_frame, text="☕ Support on Ko-fi", 
+                          command=lambda: self.open_url("https://ko-fi.com/duskfallcrew/"), 
+                          bootstyle="warning-outline").pack(side=LEFT, padx=(0, 10))
+                
+        except Exception as e:
+            print(f"❌ Error creating Ko-fi button: {e}")
+            self.logger.error(f"Error creating Ko-fi button: {e}")
+            # Fallback to text-only button
+            ttk.Button(parent_frame, text="☕ Support on Ko-fi", 
+                      command=lambda: self.open_url("https://ko-fi.com/duskfallcrew/"), 
+                      bootstyle="warning-outline").pack(side=LEFT, padx=(0, 10))
         
     def open_url(self, url):
         """Open URL in default browser"""

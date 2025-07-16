@@ -2,7 +2,11 @@ import tkinter as tk
 from tkinter import messagebox
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-import threading
+import subprocess
+import tempfile
+import json
+import os
+import time
 from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
@@ -20,7 +24,7 @@ class PluralKitDialog:
         
     def show(self):
         """Show the PluralKit dialog"""
-        self.dialog = tk.Toplevel(self.parent)
+        self.dialog = ttk.Toplevel(self.parent)
         self.dialog.title("PluralKit Integration")
         self.dialog.geometry("500x400")
         self.dialog.resizable(False, False)
@@ -123,16 +127,16 @@ class PluralKitDialog:
         """Test the PluralKit API connection"""
         token = self.token_entry.get().strip()
         if not token:
-            self.status_label.config(text="Please enter a token", foreground="red")
+            self.status_label.config(text="Please enter a token", bootstyle="danger")
             return
         
         self.pk_sync.api.set_token(token)
         success, message = self.pk_sync.api.test_connection()
         
         if success:
-            self.status_label.config(text=f"✓ {message}", foreground="green")
+            self.status_label.config(text=f"✓ {message}", bootstyle="success")
         else:
-            self.status_label.config(text=f"✗ {message}", foreground="red")
+            self.status_label.config(text=f"✗ {message}", bootstyle="danger")
     
     def save_token(self):
         """Save the PluralKit token"""
@@ -144,10 +148,10 @@ class PluralKitDialog:
         success, message = self.pk_sync.setup_token(token)
         
         if success:
-            self.status_label.config(text=f"✓ Token saved: {message}", foreground="green")
+            self.status_label.config(text=f"✓ Token saved: {message}", bootstyle="success")
             messagebox.showinfo("Success", "Token saved successfully!")
         else:
-            self.status_label.config(text=f"✗ {message}", foreground="red")
+            self.status_label.config(text=f"✗ {message}", bootstyle="danger")
             messagebox.showerror("Error", f"Failed to save token: {message}")
     
     def check_connection_status(self):
@@ -155,36 +159,105 @@ class PluralKitDialog:
         if self.pk_sync.load_saved_token():
             success, message = self.pk_sync.api.test_connection()
             if success:
-                self.status_label.config(text=f"✓ Connected: {message}", foreground="green")
+                self.status_label.config(text=f"✓ Connected: {message}", bootstyle="success")
             else:
-                self.status_label.config(text=f"✗ Connection issue: {message}", foreground="orange")
+                self.status_label.config(text=f"✗ Connection issue: {message}", bootstyle="warning")
         else:
-            self.status_label.config(text="No token configured", foreground="gray")
+            self.status_label.config(text="No token configured", bootstyle="secondary")
     
     def sync_members(self):
-        """Sync members from PluralKit"""
+        """Sync members from PluralKit using separate process"""
         if not self.pk_sync.load_saved_token():
             messagebox.showerror("Error", "Please save a valid token first")
             return
         
-        self.progress_label.config(text="Syncing members...")
+        self.progress_label.config(text="Starting sync...")
         self.progress_bar.start()
         self.sync_button.config(state=DISABLED)
         
-        def sync_thread():
-            try:
-                download_avatars = self.download_avatars_var.get()
-                new_count, updated_count, errors = self.pk_sync.sync_members(download_avatars)
-                
-                # Update UI in main thread
-                self.dialog.after(0, self.sync_complete, new_count, updated_count, errors)
-            except Exception as e:
-                self.dialog.after(0, self.sync_error, str(e))
+        # Create temporary status file
+        self.status_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        self.status_file.close()
         
-        threading.Thread(target=sync_thread, daemon=True).start()
+        # Start worker process
+        download_avatars = self.download_avatars_var.get()
+        worker_script = os.path.join(os.path.dirname(__file__), 'pk_sync_worker.py')
+        
+        cmd = [
+            'python', worker_script,
+            self.status_file.name,
+            'sync',
+            'true' if download_avatars else 'false'
+        ]
+        
+        try:
+            self.worker_process = subprocess.Popen(cmd, 
+                                                 stdout=subprocess.PIPE, 
+                                                 stderr=subprocess.PIPE)
+            # Start monitoring the process
+            self.monitor_sync_process()
+        except Exception as e:
+            self.sync_error(f"Failed to start sync process: {e}")
+    
+    def monitor_sync_process(self):
+        """Monitor the worker process and update UI"""
+        try:
+            # Check if process is still running
+            if self.worker_process.poll() is None:
+                # Process still running, check status file
+                try:
+                    with open(self.status_file.name, 'r') as f:
+                        status_data = json.load(f)
+                    
+                    status = status_data.get('status')
+                    message = status_data.get('message', '')
+                    progress = status_data.get('progress', 0)
+                    
+                    # Update UI
+                    self.progress_label.config(text=message)
+                    
+                    if status == 'complete':
+                        data = status_data.get('data', {})
+                        self.sync_complete(data.get('new_count', 0), 
+                                         data.get('updated_count', 0), 
+                                         data.get('errors', []))
+                        return
+                    elif status == 'error':
+                        self.sync_error(message)
+                        return
+                        
+                except (FileNotFoundError, json.JSONDecodeError):
+                    pass  # Status file not ready yet
+                
+                # Continue monitoring
+                self.dialog.after(500, self.monitor_sync_process)
+            else:
+                # Process finished, check final status
+                returncode = self.worker_process.returncode
+                if returncode != 0:
+                    stderr = self.worker_process.stderr.read().decode()
+                    self.sync_error(f"Worker process failed: {stderr}")
+                else:
+                    # Check final status
+                    try:
+                        with open(self.status_file.name, 'r') as f:
+                            status_data = json.load(f)
+                        
+                        if status_data.get('status') == 'complete':
+                            data = status_data.get('data', {})
+                            self.sync_complete(data.get('new_count', 0), 
+                                             data.get('updated_count', 0), 
+                                             data.get('errors', []))
+                        else:
+                            self.sync_error(status_data.get('message', 'Unknown error'))
+                    except:
+                        self.sync_error("Failed to read final status")
+        
+        except Exception as e:
+            self.sync_error(f"Monitor error: {e}")
     
     def full_import(self):
-        """Perform full import from PluralKit"""
+        """Perform full import from PluralKit using separate process"""
         if not messagebox.askyesno("Full Import Warning", 
                                   "This will replace all existing members. Continue?"):
             return
@@ -193,21 +266,86 @@ class PluralKitDialog:
             messagebox.showerror("Error", "Please save a valid token first")
             return
         
-        self.progress_label.config(text="Importing system...")
+        self.progress_label.config(text="Starting import...")
         self.progress_bar.start()
         self.import_button.config(state=DISABLED)
         
-        def import_thread():
-            try:
-                download_avatars = self.download_avatars_var.get()
-                success, message, stats = self.pk_sync.import_full_system(download_avatars)
-                
-                # Update UI in main thread
-                self.dialog.after(0, self.import_complete, success, message, stats)
-            except Exception as e:
-                self.dialog.after(0, self.import_error, str(e))
+        # Create temporary status file
+        self.status_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        self.status_file.close()
         
-        threading.Thread(target=import_thread, daemon=True).start()
+        # Start worker process
+        download_avatars = self.download_avatars_var.get()
+        worker_script = os.path.join(os.path.dirname(__file__), 'pk_sync_worker.py')
+        
+        cmd = [
+            'python', worker_script,
+            self.status_file.name,
+            'import',
+            'true' if download_avatars else 'false'
+        ]
+        
+        try:
+            self.worker_process = subprocess.Popen(cmd, 
+                                                 stdout=subprocess.PIPE, 
+                                                 stderr=subprocess.PIPE)
+            # Start monitoring the process
+            self.monitor_import_process()
+        except Exception as e:
+            self.import_error(f"Failed to start import process: {e}")
+    
+    def monitor_import_process(self):
+        """Monitor the import worker process and update UI"""
+        try:
+            # Check if process is still running
+            if self.worker_process.poll() is None:
+                # Process still running, check status file
+                try:
+                    with open(self.status_file.name, 'r') as f:
+                        status_data = json.load(f)
+                    
+                    status = status_data.get('status')
+                    message = status_data.get('message', '')
+                    progress = status_data.get('progress', 0)
+                    
+                    # Update UI
+                    self.progress_label.config(text=message)
+                    
+                    if status == 'complete':
+                        data = status_data.get('data', {})
+                        self.import_complete(True, message, data)
+                        return
+                    elif status == 'error':
+                        self.import_error(message)
+                        return
+                        
+                except (FileNotFoundError, json.JSONDecodeError):
+                    pass  # Status file not ready yet
+                
+                # Continue monitoring
+                self.dialog.after(500, self.monitor_import_process)
+            else:
+                # Process finished, check final status
+                returncode = self.worker_process.returncode
+                if returncode != 0:
+                    stderr = self.worker_process.stderr.read().decode()
+                    self.import_error(f"Worker process failed: {stderr}")
+                else:
+                    # Check final status
+                    try:
+                        with open(self.status_file.name, 'r') as f:
+                            status_data = json.load(f)
+                        
+                        if status_data.get('status') == 'complete':
+                            data = status_data.get('data', {})
+                            self.import_complete(True, status_data.get('message', 'Import complete'), data)
+                        else:
+                            self.import_error(status_data.get('message', 'Unknown error'))
+                    except:
+                        self.import_error("Failed to read final status")
+        
+        except Exception as e:
+            self.import_error(f"Monitor error: {e}")
     
     def sync_complete(self, new_count, updated_count, errors):
         """Handle sync completion"""

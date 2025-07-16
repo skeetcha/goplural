@@ -6,29 +6,30 @@ Add your custom ttkbootstrap themes here
 import ttkbootstrap as ttk
 from ttkbootstrap import Style
 
-# Custom themes dictionary
+# Custom themes dictionary - DISABLED cyberpunk_plural (causes errors)
 CUSTOM_THEMES = {
-    "cyberpunk_plural": {
-        "type": "dark",
-        "colors": {
-            "primary": "#7745d1",      # Deep purple - main actions
-            "secondary": "#ba1ca1",    # Magenta - secondary actions  
-            "success": "#3a8e7f",      # Teal green - success states
-            "info": "#1687cb",         # Blue - info messages
-            "warning": "#c99504",      # Orange - warnings
-            "danger": "#bb0700",       # Red - danger/errors
-            "light": "#37b5c4",        # Light cyan - highlights
-            "dark": "#2c0352",         # Dark purple - containers
-            "bg": "#000811",           # Deep space blue - main background
-            "fg": "#00fbea",           # Bright cyan - main text
-            "selectbg": "#5c22ba",     # Purple - selections
-            "selectfg": "#ffffff",     # White - selected text
-            "border": "#060606",       # Almost black - borders
-            "inputfg": "#bfb6cd",      # Light purple - input text
-            "inputbg": "#30115e",      # Dark purple - input backgrounds
-            "active": "#17082E"        # Very dark purple - active states
-        }
-    }
+    # CYBERPUNK_PLURAL THEME DISABLED DUE TO StyleBuilderTTK ERRORS
+    # "cyberpunk_plural": {
+    #     "type": "dark", 
+    #     "colors": {
+    #         "primary": "#7745d1",
+    #         "secondary": "#ba1ca1",
+    #         "success": "#3a8e7f",
+    #         "info": "#1687cb", 
+    #         "warning": "#c99504",
+    #         "danger": "#bb0700",
+    #         "light": "#37b5c4",
+    #         "dark": "#2c0352",
+    #         "bg": "#000811",
+    #         "fg": "#00fbea",
+    #         "selectbg": "#5c22ba",
+    #         "selectfg": "#ffffff",
+    #         "border": "#060606",
+    #         "inputfg": "#bfb6cd",
+    #         "inputbg": "#30115e",
+    #         "active": "#17082E"
+    #     }
+    # }
 }
 
 def register_custom_themes():
@@ -45,7 +46,9 @@ def register_custom_themes():
         
         # Try to import and register the theme
         try:
-            from cyberpunk_plural_theme import theme
+            # TEMPORARILY DISABLED - causes StyleBuilderTTK error
+            # from cyberpunk_plural_theme import theme
+            pass
             
             # Register the theme with ttkbootstrap
             style = Style()

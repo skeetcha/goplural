@@ -1,11 +1,12 @@
 
 import tkinter as tk
-from tkinter import ttk, messagebox, font
+from tkinter import messagebox, font
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from member_manager import MemberManager
-import ttkbootstrap as ttk_bs
-from custom_themes import get_custom_theme_names, get_theme_description
+from ui.themes.manager import ThemeManager
 
-class SettingsManager(tk.Toplevel):
+class SettingsManager(ttk.Toplevel):
     def __init__(self, parent_window, parent_app):
         super().__init__(parent_window)
         self.parent_window = parent_window
@@ -34,22 +35,16 @@ class SettingsManager(tk.Toplevel):
         ttk.Label(general_frame, text="Select Theme:").pack(anchor=tk.W, pady=(0, 5))
         self.theme_selector = ttk.Combobox(general_frame, state="readonly")
         
-        # Get all available themes dynamically (including custom ones)
-        try:
-            built_in_themes = list(ttk_bs.Style().theme_names())
-            custom_themes = get_custom_theme_names()
-            all_themes = sorted(built_in_themes + custom_themes)
-            self.theme_selector['values'] = all_themes
-        except:
-            # Fallback to known themes
-            self.theme_selector['values'] = ["superhero", "darkly", "solar", "cyborg", "vapor", "pulse", "flatly", "journal", "litera", "lumen", "minty", "morph", "sandstone", "united", "yeti", "cerculean", "cosmo", "simplex", "cyberpunk_plural"]
+        # Get all available themes from the ThemeManager
+        all_themes = self.parent.theme_manager.get_available_themes()
+        self.theme_selector['values'] = all_themes
         
         self.theme_selector.set(self.parent.get_theme_name())
         self.theme_selector.pack(fill=tk.X, pady=(0, 5))
         self.theme_selector.bind("<<ComboboxSelected>>", self.on_theme_selected)
         
         # Theme description label
-        self.theme_description = ttk.Label(general_frame, text="", font=("Arial", 9), foreground="gray")
+        self.theme_description = ttk.Label(general_frame, text="", font=("Arial", 9), bootstyle="secondary")
         self.theme_description.pack(fill=tk.X, pady=(0, 15))
         
         # Update initial theme description
@@ -112,10 +107,36 @@ class SettingsManager(tk.Toplevel):
         apply_size_button.pack(anchor=tk.W)
 
         # Set current size
-        current_geometry = self.parent.root.geometry().split('+')[0] # e.g., "800x600"
+        current_geometry = self.parent_window.geometry().split('+')[0] # e.g., "800x600"
         width, height = current_geometry.split('x')
         self.width_entry.insert(0, width)
         self.height_entry.insert(0, height)
+
+        # Personalized Greeting Settings
+        ttk.Label(general_frame, text="Status Bar:").pack(anchor=tk.W, pady=(15, 5))
+        greeting_frame = ttk.Frame(general_frame)
+        greeting_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        self.personalized_greeting_var = tk.BooleanVar()
+        current_greeting_setting = self.parent.app_db.get_setting('personalized_greeting', True)
+        self.personalized_greeting_var.set(current_greeting_setting)
+        
+        greeting_checkbox = ttk.Checkbutton(
+            greeting_frame, 
+            text="Show personalized greeting (e.g., 'Hello System Name! Having a nice afternoon?')",
+            variable=self.personalized_greeting_var,
+            command=self.apply_greeting_setting
+        )
+        greeting_checkbox.pack(anchor=tk.W)
+        
+        # Add a small description
+        greeting_desc = ttk.Label(
+            greeting_frame, 
+            text="When enabled, shows your system name and time-based greeting in the status bar",
+            font=("Arial", 9), 
+            bootstyle="secondary"
+        )
+        greeting_desc.pack(anchor=tk.W, pady=(2, 0))
 
         # Lazy load MemberManager
         self.member_manager_frame = None
@@ -138,12 +159,9 @@ class SettingsManager(tk.Toplevel):
         """Update the theme description label"""
         selected_theme = self.theme_selector.get()
         if selected_theme:
-            try:
-                theme_info = get_theme_description(selected_theme)
-                description = f"🎨 {theme_info['description']} ({theme_info['style']})"
-                self.theme_description.config(text=description)
-            except:
-                self.theme_description.config(text="")
+            self.theme_description.config(text=f"🎨 Current theme: {selected_theme}")
+        else:
+            self.theme_description.config(text="")
     
     def apply_theme(self, event=None):
         selected_theme = self.theme_selector.get()
@@ -188,9 +206,24 @@ class SettingsManager(tk.Toplevel):
         try:
             width = int(self.width_entry.get())
             height = int(self.height_entry.get())
-            self.parent.root.geometry(f"{width}x{height}")
+            self.parent_window.geometry(f"{width}x{height}")
         except ValueError:
             messagebox.showerror("Error", "Invalid size. Please enter numbers for width and height.", parent=self)
+
+    def apply_greeting_setting(self):
+        """Apply the personalized greeting setting"""
+        try:
+            enabled = self.personalized_greeting_var.get()
+            self.parent.app_db.set_setting('personalized_greeting', enabled)
+            
+            # Update the status bar immediately
+            self.parent.update_status_greeting()
+            
+            status_text = "enabled" if enabled else "disabled"
+            messagebox.showinfo("Success", f"Personalized greeting {status_text}", parent=self)
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update greeting setting: {str(e)}", parent=self)
 
     def on_closing(self):
         # Call the save method of the embedded MemberManager if it was created

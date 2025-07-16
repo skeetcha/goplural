@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 import webbrowser
 try:
     from tkinter import html
@@ -10,7 +11,7 @@ from logging.handlers import RotatingFileHandler
 
 class HelpDialog:
     def __init__(self, parent):
-        self.dialog = tk.Toplevel(parent)
+        self.dialog = ttk.Toplevel(parent)
         self.dialog.title("Plural Chat - Help")
         self.dialog.geometry("800x600")
         self.dialog.transient(parent)
@@ -73,8 +74,8 @@ class HelpDialog:
         scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        text = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set, 
-                      font=("Arial", 11), bg="white")
+        text = ttk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set, 
+                       font=("Arial", 11))
         text.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=text.yview)
         
@@ -127,8 +128,8 @@ Your data is stored locally in two databases:
         scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        text = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
-                      font=("Arial", 11), bg="white")
+        text = ttk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
+                       font=("Arial", 11))
         text.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=text.yview)
         
@@ -184,8 +185,8 @@ The proxy system is designed to be just like PluralKit but for local use!
         scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        text = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
-                      font=("Arial", 11), bg="white")
+        text = ttk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
+                       font=("Arial", 11))
         text.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=text.yview)
         
@@ -250,8 +251,8 @@ Your PK token is stored securely and only used for API calls.
         scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        text = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
-                      font=("Arial", 11), bg="white")
+        text = ttk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
+                       font=("Arial", 11))
         text.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=text.yview)
         
@@ -320,8 +321,8 @@ The system is designed to be storage-efficient while maintaining good image qual
         scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        text = tk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
-                      font=("Arial", 11), bg="white")
+        text = ttk.Text(text_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set,
+                       font=("Arial", 11))
         text.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=text.yview)
         
