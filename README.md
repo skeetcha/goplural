@@ -11,6 +11,15 @@ A desktop chat application designed specifically for plural systems, featuring P
 - **🎨 Modern Themes** - 15+ beautiful themes via ttkbootstrap
 - **📤 Export/Import** - Share system configurations with other plural folks
 - **🖼️ Avatar Support** - Display member avatars in chat
+- **📔 Personal Diary** - Private journal system for individual members
+
+## 📸 Screenshots
+
+| Main Chat Interface | Settings & Custom Themes | Personal Diary System |
+| :-----------------: | :----------------------: | :-------------------: |
+| <img src="screenshots/main_interface.png" alt="Main chat interface with member list and conversation history" width="250"> | <img src="screenshots/settings_themes.png" alt="Settings dialog with theme selection and personalized greeting options" width="250"> | <img src="screenshots/diary_system.png" alt="Personal diary system for individual member thoughts and memories" width="250"> |
+| **Active Conversations** | **Help Documentation** | **Theme Showcase** |
+| <img src="screenshots/active_chat.png" alt="Live conversation showing multiple system members chatting" width="250"> | <img src="screenshots/help_documentation.png" alt="Comprehensive help system with detailed feature documentation" width="250"> | <img src="screenshots/theme_showcase.png" alt="Beautiful ttkbootstrap themes including Criss's custom vapor-dark theme" width="250"> |
 
 ## ⚠️ Known Issues
 

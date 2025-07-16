@@ -349,6 +349,158 @@ locales/
 
 ---
 
+## 🚀 **Phase 6: Plugin System** *(Future Release)*
+
+### 🧩 **6.1 Plugin Architecture**
+**Goal:** Allow community-contributed features without bloating core app
+
+**Features to Add:**
+- [ ] **Plugin API framework** - Safe, sandboxed plugin system
+- [ ] **Plugin manager UI** - Install, enable/disable, configure plugins
+- [ ] **Plugin marketplace/registry** - Community plugin discovery
+- [ ] **Plugin development kit** - Documentation and tools for plugin creators
+- [ ] **Plugin sandboxing** - Security isolation for third-party code
+
+**Example Plugin Categories:**
+- **Export plugins** - New export formats (Markdown, HTML, PDF, etc.)
+- **Social sharing plugins** - Optional sharing to social media (screenshot conversations, system stats)
+- **Integration plugins** - Connect to other plural tools and services
+- **Theme plugins** - Community-created themes and customizations
+- **Analytics plugins** - Advanced statistics and reporting
+- **Backup plugins** - Cloud backup providers, sync services
+
+**Technical Notes:**
+- Plugin system should be **optional** - core app works fully without any plugins
+- Use secure plugin API boundaries - plugins can't access sensitive data without permission
+- Plugin installation from local files or community registry
+- Plugins can extend UI, add menu items, create new dialogs
+- Plugin data storage separate from core app database
+
+**Security Considerations:**
+- All plugins run in restricted environment
+- User approval required for data access
+- No direct database access - only through API
+- Plugin code review for community registry
+- Easy plugin removal without affecting core app
+
+**Files to Create:**
+- `plugin_system/` - Core plugin architecture
+- `plugin_system/api.py` - Plugin API interface
+- `plugin_system/manager.py` - Plugin loading and management
+- `plugin_system/ui/` - Plugin management UI
+- `docs/plugin_development.md` - Plugin development guide
+
+---
+
+## 📱 **Phase 7: Mobile Companion App** *(Long-term Future)*
+
+### 🚀 **7.1 Mobile Strategy**
+**Goal:** Provide mobile access without competing with existing tools
+
+**Philosophy:**
+- **Desktop-first, mobile-companion** - Mobile app syncs with desktop, doesn't replace it
+- **Freemium model** - Basic features free, premium features cover development costs
+- **$25/year Android publishing** - Way better than ads, keeps app clean
+- **iOS later** - $99/year is steeper, but if Android succeeds
+
+**Core Free Features:**
+- [ ] **Read-only chat history** - View conversations from desktop
+- [ ] **Basic member switching** - Send messages as different members
+- [ ] **PluralKit sync** - Same data as desktop app
+- [ ] **Simple themes** - Basic theming support
+- [ ] **Offline reading** - Cached conversations available offline
+
+**Premium Features ($1.99 one-time purchase):**
+- [ ] **Full chat editing** - Edit/delete messages from mobile
+- [ ] **File attachments** - Send images, voice notes from mobile
+- [ ] **Advanced themes** - Custom themes, plugin support
+- [ ] **Cloud sync** - Sync between multiple devices
+- [ ] **Voice messages** - Record and send voice notes
+- [ ] **Export features** - Generate reports, backups from mobile
+
+**Why This Works:**
+- **Not competing with SP** - We're focused on chat/conversation, not full plural management
+- **Covers costs** - App store fees, server costs for cloud sync
+- **No ads** - Clean experience, no tracking
+- **Desktop users get mobile access** - Natural extension of existing workflow
+
+**Technical Approach:**
+- **Flutter/React Native** - Cross-platform development
+- **Local SQLite + Cloud sync** - Same database structure as desktop
+- **API backend** - Secure sync between desktop and mobile
+- **Selective sync** - Choose what data to sync to mobile
+
+**Revenue Model:**
+- **Freemium with one-time purchase** - Basic functionality always free
+- **$1.99 forever** - No subscriptions, no recurring fees, no bullshit
+- **Premium features are convenience** - Everything works without paying
+- **Transparent pricing** - Buy once, own forever
+- **Desktop always free** - Mobile premium helps fund overall development
+
+**Files to Create:**
+- `mobile_app/` - Flutter/React Native mobile app
+- `sync_server/` - Cloud sync backend (optional)
+- `api/` - Mobile API endpoints
+- `mobile_app/docs/` - Mobile development documentation
+
+### 🛠️ **7.3 Community Add-On System**
+**Goal:** Let community developers create mobile add-ons with fair pricing
+
+**Community Add-On Philosophy:**
+- [ ] **$5 maximum price** - One-time purchase, covers development costs only
+- [ ] **GitHub distribution** - Load add-ons directly from GitHub repositories
+- [ ] **Cost-covering only** - Pricing to cover app store fees, hosting, development time
+- [ ] **Community-driven** - Anyone can create and distribute add-ons
+- [ ] **No gatekeeping** - Open ecosystem, not curated app store
+
+**Example Add-On Ideas:**
+- **Custom export formats** - Export to specific journal apps, blog platforms
+- **Social integrations** - Post system stats, share favorite conversations
+- **Advanced themes** - Community-created theme packs
+- **Analytics dashboards** - Detailed system activity reports
+- **Backup providers** - Integration with specific cloud storage services
+- **Voice processing** - Advanced voice note features, transcription
+
+**Technical Implementation:**
+- **GitHub as marketplace** - Add-ons distributed via GitHub releases
+- **Plugin manifest system** - Standard format for add-on metadata
+- **In-app GitHub integration** - Browse, install, update add-ons from within app
+- **Secure sandboxing** - Add-ons run in isolated environment
+- **Easy installation** - QR code or link to install add-ons
+- **Version management** - Automatic updates from GitHub
+
+**Pricing Guidelines for Community:**
+- **Free add-ons encouraged** - Most should be free, community-driven
+- **$1-5 range for paid** - Only to cover legitimate development costs
+- **No recurring fees** - One-time purchase maximum
+- **Transparent cost breakdown** - Developers explain what the fee covers
+- **Pay-what-you-want option** - Suggested price with option to pay more
+
+**Why This Works:**
+- **Supports community developers** - Fair compensation for work
+- **Keeps costs reasonable** - $5 max prevents exploitation
+- **Uses existing infrastructure** - GitHub is free, familiar
+- **No app store fees for add-ons** - Distributed directly
+- **Encourages innovation** - Low barrier to entry for developers
+
+### 🤝 **7.2 Desktop-Mobile Integration**
+**Goal:** Seamless experience across devices
+
+**Features to Add:**
+- [ ] **QR code pairing** - Easy device linking
+- [ ] **Selective sync** - Choose conversations to sync
+- [ ] **Push notifications** - Optional mobile notifications
+- [ ] **Handoff support** - Continue conversations across devices
+- [ ] **Conflict resolution** - Smart merge when both devices are used
+
+**Technical Notes:**
+- End-to-end encryption for cloud sync
+- Local-first architecture maintained
+- Mobile can work fully offline with synced data
+- Desktop remains primary, mobile is convenience
+
+---
+
 **Ready to build something awesome?** 🚀✨
 
 *"Because every system deserves premium features without premium prices."*

@@ -81,3 +81,10 @@ settings.conf
 # Test files
 test_data/
 temp_test_*
+
+# Screenshot management - ignore temp/old files but keep the curated ones
+screenshots/Screenshot*.png
+screenshots/Screenshot*.jpg
+screenshots/temp_*
+screenshots/old_*
+# The renamed screenshots (main_interface.png, etc.) will be tracked
