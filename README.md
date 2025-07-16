@@ -23,12 +23,19 @@ A desktop chat application designed specifically for plural systems, featuring P
 
 ## ⚠️ Known Issues
 
-- **PluralKit Import**: Currently causes UI freezing during large imports. We're
-   working on an async solution. For now, use smaller batches or be patient during
-   imports.
-- **Fix in progress**: Async/threading improvements coming in the next 24 hours!
-- **Themes not applying properly, UI defaulting to darkmode**
-- **Comhra of duskfall demands Criss sleeps so we'll do this tomorrow**
+- **Private Members**: Private members cannot have their avatars downloaded via API (this is expected behavior for privacy protection)
+- **Minor "FINAL STATUS" errors**: Occasional minor errors during sync operations (under investigation)
+- **Sample Members**: Sample members are not added upon developer cleanup (manual setup required for fresh installations)
+
+## 📋 Project Documentation
+
+- **[Installation Guide](INSTALLATION.md)** - Detailed installation instructions for all platforms
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines and standards
+- **[Security Policy](SECURITY.md)** - Security practices and vulnerability reporting
+- **[Development Roadmap](DEVELOPMENT_ROADMAP.md)** - Future features and development plans
+- **[Community Disclaimer](DISCLAIMER.md)** - Our inclusive ethos and stance on plural community drama
+- **[Third-Party Notices](NOTICES.md)** - Licensing and attribution information
 
 ## 🚀 Quick Start
 
@@ -131,7 +138,9 @@ Choose from these beautiful themes:
 - **ttkbootstrap** - Modern UI framework
 - **SQLite** - Local database
 - **Pillow** - Image processing
-- **Requests** - PluralKit API integration
+- **Requests** - HTTP client for PluralKit API
+- **aiohttp** - Asynchronous HTTP client
+- **aria2p** - High-performance download manager
 
 ### Project Structure
 
@@ -159,6 +168,10 @@ We welcome contributions from the plural community! Whether it's:
 - 🔧 Code improvements
 - 📖 Documentation updates
 
+**Please read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.**
+
+**Want to see what's coming next?** Check out our [Development Roadmap](DEVELOPMENT_ROADMAP.md) to see planned features and find areas where you can help!
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -174,11 +187,13 @@ For third-party components and attributions, see [NOTICES.md](NOTICES.md).
 
 ## 🔗 Links
 
-- [PluralKit](https://pluralkit.me) - The bot that inspired this project
-- [ttkbootstrap](https://ttkbootstrap.readthedocs.io) - Modern tkinter themes
-- [Support us](https://ko-fi.com/duskfallcrew) - Help keep development going
-- [Ktiseos Nyx](https://discord.gg/HhBSvM9gBY) - Development & Ai Discord which is Plural Friendly! 
-- [Earth & Dusk Media](https://discord.gg/5t2kYxt7An) our Twitch & Media Discord, which both of our discords have PK enabled for proxying!
+- **[GitHub Issues](https://github.com/Ktiseos-Nyx/plural_chat/issues)** - Bug reports and feature requests
+- **[GitHub Discussions](https://github.com/Ktiseos-Nyx/plural_chat/discussions)** - Community discussions and Q&A
+- **[PluralKit](https://pluralkit.me)** - The bot that inspired this project
+- **[ttkbootstrap](https://ttkbootstrap.readthedocs.io)** - Modern tkinter themes
+- **[Support us](https://ko-fi.com/duskfallcrew)** - Help keep development going
+- **[Ktiseos Nyx Discord](https://discord.gg/HhBSvM9gBY)** - Development & AI Discord (Plural Friendly!)
+- **[Earth & Dusk Media Discord](https://discord.gg/5t2kYxt7An)** - Our Twitch & Media Discord (PK enabled!)
 
 ---
 

@@ -55,6 +55,20 @@ This file contains notices and license information for third-party software and 
 - **Usage**: Secure storage of PluralKit API tokens
 - **License**: Apache 2.0/BSD - https://github.com/pyca/cryptography/blob/main/LICENSE
 
+### aiohttp
+- **License**: Apache License 2.0
+- **Copyright**: © 2013-2024 Nikolay Kim and Andrew Svetlov
+- **Project**: https://github.com/aio-libs/aiohttp
+- **Usage**: Asynchronous HTTP client for improved API performance
+- **License**: Apache 2.0 - https://github.com/aio-libs/aiohttp/blob/master/LICENSE.txt
+
+### aria2p
+- **License**: ISC License
+- **Copyright**: © 2018-2024 Timothée Mazzucotelli
+- **Project**: https://github.com/pawamoy/aria2p
+- **Usage**: Python wrapper for aria2 download manager
+- **License**: ISC - https://github.com/pawamoy/aria2p/blob/main/LICENSE
+
 ## External Tools (Optional Dependencies)
 
 ### aria2
@@ -104,6 +118,7 @@ This application uses Python's standard library components including:
 - **logging** - Application logging (included with Python)
 - **threading** - Concurrent operations (included with Python)
 - **subprocess** - External process management (included with Python)
+- **asyncio** - Asynchronous programming support (included with Python 3.8+)
 
 ---
 
