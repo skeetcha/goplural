@@ -2,6 +2,31 @@
 
 A desktop chat application designed specifically for plural systems, featuring PluralKit integration and intelligent proxy detection.
 
+## 📑 Table of Contents
+
+- [✨ Features](#-features)
+- [📸 Screenshots](#-screenshots)
+- [⚠️ Known Issues](#️-known-issues)
+- [📋 Project Documentation](#-project-documentation)
+- [🚀 Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [First Time Setup](#first-time-setup)
+- [🎯 Proxy Detection](#-proxy-detection)
+- [🔧 PluralKit Integration](#-pluralkit-integration)
+  - [API Token Setup](#api-token-setup)
+  - [What Gets Imported](#what-gets-imported)
+- [📁 File Structure](#-file-structure)
+- [🎨 Themes](#-themes)
+- [📤 Sharing Systems](#-sharing-systems)
+- [🛠️ Development](#️-development)
+  - [Tech Stack](#tech-stack)
+  - [Project Structure](#project-structure)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [💝 Credits](#-credits)
+- [🔗 Links](#-links)
+
 ## ✨ Features
 
 - **🏠 Local Desktop Chat** - Private conversations between system members
