@@ -1,6 +1,8 @@
 # 🗨️ Plural Chat
 
-A desktop chat application designed specifically for plural systems, featuring PluralKit integration and intelligent proxy detection.
+A chat app for desktop and web for chatting within your plural system as well as with other systems 
+
+Except for the above description and this line here, this README has not been altered from the original application. Please read other files to see how to install and use this application.
 
 ## 📑 Table of Contents
 

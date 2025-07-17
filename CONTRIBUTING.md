@@ -15,14 +15,14 @@ Thank you for your interest in contributing to Plural Chat! This project is buil
 Found something broken? Help us fix it!
 
 **Before reporting:**
-- Check [existing issues](https://github.com/Ktiseos-Nyx/plural_chat/issues) first
+- Check [existing issues](https://github.com/skeetcha/goplural/issues) first
 - Try the latest version
 - Include steps to reproduce
 
 **Good bug reports include:**
 - Clear description of what happened vs. what should happen
 - Step-by-step reproduction instructions
-- Your OS, Python version, and relevant system info
+- Your OS, Go version, and relevant system info
 - Screenshots if relevant
 - Error messages/logs if available
 
@@ -45,7 +45,7 @@ Ready to dive in? Here's how:
 ## 🚀 Development Setup
 
 ### Prerequisites
-- Python 3.8 or higher
+- Go version 1.24.2 or higher
 - Git
 - A text editor or IDE
 
@@ -55,20 +55,11 @@ Ready to dive in? Here's how:
 git clone https://github.com/YOUR-USERNAME/plural_chat.git
 cd plural_chat
 
-# Create a virtual environment
-python -m venv venv
-
-# Activate it
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
 # Install dependencies
-pip install -e .
+go mod update
 
 # Run the app to make sure everything works
-python main.py
+go run .
 ```
 
 ## 📋 Contribution Guidelines
@@ -79,19 +70,6 @@ python main.py
 - **Comment sparingly** - Good code explains itself, comments explain why
 - **Keep functions small** - One responsibility per function
 - **Error handling** - Always handle potential errors gracefully
-
-### 🗂️ Project Structure
-```
-plural_chat/
-├── main.py                 # Main application entry point
-├── database_manager.py     # Database operations
-├── pluralkit_api.py       # PluralKit integration
-├── ui/                    # UI components
-│   ├── themes/            # Theme management
-│   └── components/        # Reusable UI components
-├── dialogs/               # Dialog windows
-└── docs/                  # Documentation
-```
 
 ### 🔄 Development Workflow
 
@@ -233,15 +211,12 @@ Contributors get:
 
 ## 📚 Resources
 
-- **Python tkinter docs**: [https://docs.python.org/3/library/tkinter.html](https://docs.python.org/3/library/tkinter.html)
-- **ttkbootstrap docs**: [https://ttkbootstrap.readthedocs.io/](https://ttkbootstrap.readthedocs.io/)
-- **PluralKit API docs**: [https://pluralkit.me/api/](https://pluralkit.me/api/)
-- **SQLite docs**: [https://sqlite.org/docs.html](https://sqlite.org/docs.html)
+To be added later
 
 ## ❓ Questions?
 
 **Not sure about something?** Ask! We're here to help:
-- Open a [GitHub discussion](https://github.com/Ktiseos-Nyx/plural_chat/discussions)
+- Open a [GitHub discussion](https://github.com/skeetcha/goplural/discussions)
 - Join our [Discord](https://discord.gg/HhBSvM9gBY)
 - Create an issue with the `question` label
 

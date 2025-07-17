@@ -15,8 +15,7 @@ We actively maintain security for:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x.x   | ✅ Active support  |
-| 0.x.x   | ❌ No longer supported |
+| 0.x.x   | ✅ Active support  |
 
 **Always use the latest version** for the best security and features.
 
@@ -29,7 +28,7 @@ We actively maintain security for:
 **For security issues, contact us privately:**
 
 1. **Discord DM**: Message `duskfallcrew` on [our Discord](https://discord.gg/HhBSvM9gBY)
-2. **GitHub Security**: Use [GitHub's security advisory feature](https://github.com/Ktiseos-Nyx/plural_chat/security/advisories)
+2. **GitHub Security**: Use [GitHub's security advisory feature](https://github.com/skeetcha/goplural/security/advisories)
 3. **Email**: If you have our email, that works too
 
 ### 📋 What to Include

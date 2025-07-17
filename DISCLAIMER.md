@@ -192,7 +192,7 @@ Check out our [Contributing Guide](CONTRIBUTING.md) to get started.
 ## 📞 Contact
 
 **For questions about this disclaimer:**
-- GitHub Discussions: [Community Q&A](https://github.com/Ktiseos-Nyx/plural_chat/discussions)
+- GitHub Discussions: [Community Q&A](https://github.com/skeetcha/goplural/discussions)
 - Discord: [Our Community Server](https://discord.gg/HhBSvM9gBY)
 - Email: For private concerns
 
