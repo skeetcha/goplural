@@ -1,90 +1,27 @@
-# Databases - user data
-*.db
-*.sqlite
-*.sqlite3
+# Created by https://www.toptal.com/developers/gitignore/api/go
+# Edit at https://www.toptal.com/developers/gitignore?templates=go
 
-# Personal data directories
-avatars/*
-!avatars/default_avatar.png
-
-# Log files
-*.log
-logs/
-*.log.*
-
-# Export files and personal data
-*.json
-exports/
-chat_history.*
-messages.*
-history.*
-
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
+### Go ###
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
 *.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+*.dylib
 
-# Virtual environments
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
+# Test binary, built with `go test -c`
+*.test
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Dependency directories (remove the comment below to include it)
+# vendor/
 
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.backup
+# Go workspace file
+go.work
 
-# User configuration that shouldn't be shared
-config.ini
-settings.conf
-*.secret
-*.key
-
-# Test files
-test_data/
-temp_test_*
-
-# Screenshot management - ignore temp/old files but keep the curated ones
-screenshots/Screenshot*.png
-screenshots/Screenshot*.jpg
-screenshots/temp_*
-screenshots/old_*
-# The renamed screenshots (main_interface.png, etc.) will be tracked
+# End of https://www.toptal.com/developers/gitignore/api/go
