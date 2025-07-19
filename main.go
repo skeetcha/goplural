@@ -1,17 +1,18 @@
 package main
 
 import (
-	"image/color"
 	"log"
 	"os"
 
 	"gioui.org/app"
 	"gioui.org/op"
-	"gioui.org/text"
-	"gioui.org/widget/material"
+
+	"github.com/skeetcha/goplural/themes"
 )
 
 func main() {
+	themes.SetupThemes()
+
 	go func() {
 		window := new(app.Window)
 		err := run(window)
@@ -27,7 +28,7 @@ func main() {
 }
 
 func run(window *app.Window) error {
-	theme := material.NewTheme()
+	//theme := material.NewTheme()
 	var ops op.Ops
 
 	for {
@@ -37,12 +38,6 @@ func run(window *app.Window) error {
 		case app.FrameEvent:
 			gtx := app.NewContext(&ops, e)
 
-			title := material.H1(theme, "Hello, Gio")
-
-			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
-			title.Color = maroon
-			title.Alignment = text.Middle
-			title.Layout(gtx)
 			e.Frame(gtx.Ops)
 		}
 	}
