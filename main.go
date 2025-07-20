@@ -50,8 +50,26 @@ func settingsWindow(window *app.Window) error {
 				Axis: layout.Vertical,
 			}.Layout(gtx,
 				layout.Flexed(1, func(gtx C) D {
+					return material.H3(theme, "General Settings").Layout(gtx)
+				}),
+				layout.Flexed(1, func(gtx C) D {
 					return material.Body1(theme, "Select a Theme:").Layout(gtx)
 				}),
+				// select
+				// current theme message
+				// font settings header
+				// horizontal flex
+				// // font label
+				// // font select
+				// // size label
+				// // size select
+				// // apply font button
+				// window size header
+				// horizontal flex
+				// // width input box
+				// // x label
+				// // height input box
+				// apply size button
 			)
 
 			e.Frame(gtx.Ops)
