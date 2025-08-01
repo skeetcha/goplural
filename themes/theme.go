@@ -32,4 +32,5 @@ type ThemeColors struct {
 type Theme struct {
 	ThemeType ThemeType
 	Colors    ThemeColors
+	Name      string
 }
