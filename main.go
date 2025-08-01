@@ -18,12 +18,18 @@ type (
 	D = layout.Dimensions
 )
 
+type GoPlural struct {
+	themes []themes.Theme
+}
+
 func main() {
-	themes.SetupThemes()
+	appData := GoPlural{
+		themes: themes.SetupThemes(),
+	}
 
 	go func() {
 		window := new(app.Window)
-		err := mainWindow(window)
+		err := mainWindow(window, &appData)
 
 		if err != nil {
 			log.Fatal(err)
@@ -35,7 +41,7 @@ func main() {
 	app.Main()
 }
 
-func settingsWindow(window *app.Window) error {
+func settingsWindow(window *app.Window, appData *GoPlural) error {
 	theme := material.NewTheme()
 	var ops op.Ops
 
@@ -77,7 +83,7 @@ func settingsWindow(window *app.Window) error {
 	}
 }
 
-func mainWindow(window *app.Window) error {
+func mainWindow(window *app.Window, appData *GoPlural) error {
 	theme := material.NewTheme()
 	var ops op.Ops
 
@@ -96,7 +102,7 @@ func mainWindow(window *app.Window) error {
 
 				go func() {
 					window := new(app.Window)
-					err := settingsWindow(window)
+					err := settingsWindow(window, appData)
 
 					if err != nil {
 						log.Fatal(err)
