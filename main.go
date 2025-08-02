@@ -16,9 +16,7 @@ type AppSettings struct {
 
 func main() {
 	app := app.New()
-	mainWindow := app.NewWindow("Hello World")
-	app.Preferences().SetInt("test.four", 4)
-	app.Preferences().SetString("test.five", "five")
+	mainWindow := app.NewWindow("GoPlural")
 	mainWindow.Resize(fyne.NewSize(800, 600))
 	mainWindow.SetMainMenu(makeMenu(app, mainWindow))
 	mainWindow.Show()
