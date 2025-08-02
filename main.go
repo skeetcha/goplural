@@ -94,6 +94,7 @@ func buildMemberSettings() fyne.CanvasObject {
 	avatarEntry := widget.NewEntry()
 	pronounEntry := widget.NewEntry()
 	proxyEntry := widget.NewEntry()
+	proxyEntry.SetPlaceHolder("Uses same proxy rules as PluralKit")
 
 	memberForm := container.New(
 		layout.NewFormLayout(),
