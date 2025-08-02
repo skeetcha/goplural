@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -205,7 +204,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window) fyne.CanvasObject {
 			PKImport(app, window, &appSettings.Members)
 		}),
 		widget.NewButton("SimplyPlural Import", func() {
-			fmt.Println("SimplyPlural Import not implemented yet")
+			SPImport(app, window, &appSettings.Members)
 		}),
 	)
 
