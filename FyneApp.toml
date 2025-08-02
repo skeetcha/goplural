@@ -1,0 +1,15 @@
+Website = "https://github.com/skeetcha/goplural"
+
+[Details]
+Icon = "goplural.ico"
+Name = "GoPlural"
+ID = "com.cityboundforest.goplural"
+Version = "1.0.0"
+Build = 1
+
+[LinuxAndBSD]
+GenericName = "GoPlural"
+Categories = ["Office"]
+Comment = "Chat with your sysmates"
+Keywords = ["chat", "journal"]
+ExecParams = ""
