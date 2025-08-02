@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -26,8 +27,10 @@ type AppSettings struct {
 
 var appSettings AppSettings
 var defaultAvatar *fyne.StaticResource
+var avatarSettingsSize []float32
 
 func main() {
+	avatarSettingsSize = []float32{300.0, 300.0}
 	app := app.New()
 	mainWindow := app.NewWindow("GoPlural")
 	loadSettings(app)
@@ -73,7 +76,7 @@ func openSettings(app fyne.App) {
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Appearance", setting.LoadAppearanceScreen(settingsWindow)),
-		container.NewTabItem("Members", buildMemberSettings(settingsWindow)),
+		container.NewTabItem("Members", buildMemberSettings(app, settingsWindow)),
 	)
 
 	settingsWindow.SetContent(tabs)
@@ -81,7 +84,7 @@ func openSettings(app fyne.App) {
 	settingsWindow.Show()
 }
 
-func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
+func buildMemberSettings(app fyne.App, window fyne.Window) fyne.CanvasObject {
 	list := widget.NewList(
 		func() int {
 			return len(appSettings.Members)
@@ -95,23 +98,40 @@ func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
 		},
 	)
 
+	var tabContainer *fyne.Container
+
 	nameEntry := widget.NewEntry()
 	avatarEntry := widget.NewEntry()
 	pronounEntry := widget.NewEntry()
-	proxyEntry := widget.NewEntry()
-	proxyEntry.SetPlaceHolder("Uses same proxy rules as PluralKit")
 
 	avatarImage := canvas.NewImageFromResource(defaultAvatar)
 	avatarImage.ScaleMode = canvas.ImageScaleFastest
-	avatarImage.SetMinSize(fyne.NewSize(300, 300))
+
+	updateImageSize := func() {
+		avatarImage.SetMinSize(createSize(avatarSettingsSize))
+	}
+
+	updateImageSize()
 
 	avatarValidator := func(text string) error {
-		if _, err := os.Stat(text); os.IsNotExist(err) {
+		var imagePath string
+
+		if text == "" {
+			imagePath = text
+		} else {
+			if text[0] == '/' {
+				imagePath = text
+			} else {
+				imagePath = path.Join(app.Storage().RootURI().Path(), text)
+			}
+		}
+
+		if _, err := os.Stat(imagePath); os.IsNotExist(err) {
 			return errors.New("file does not exist")
 		}
 
-		if storage.NewFileURI(text).MimeType() != "image" {
-			return errors.New("text is not an image")
+		if imageURI := storage.NewFileURI(imagePath); !strings.Contains(imageURI.MimeType(), "image") {
+			return errors.New("text is not an image (found " + imageURI.MimeType() + ")")
 		}
 
 		return nil
@@ -123,8 +143,19 @@ func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
 			return
 		}
 
-		avatarURI := storage.NewFileURI(text)
-		avatarImage = canvas.NewImageFromURI(avatarURI)
+		var avatarURI fyne.URI
+
+		if text[0] == '/' {
+			avatarURI = storage.NewFileURI(text)
+		} else {
+			avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), text))
+		}
+
+		*avatarImage = *canvas.NewImageFromURI(avatarURI)
+		avatarImage.Refresh()
+		tabContainer.Refresh()
+		avatarSettingsSize[1] = (300.0 * float32(avatarImage.Image.Bounds().Max.Y)) / float32(avatarImage.Image.Bounds().Max.X)
+		updateImageSize()
 	}
 
 	memberForm := container.New(
@@ -135,22 +166,28 @@ func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
 		avatarEntry,
 		widget.NewLabel("Pronouns"),
 		pronounEntry,
-		widget.NewLabel("Proxy"),
-		proxyEntry,
 	)
 
 	memberForm.Hidden = true
 
 	list.OnSelected = func(i widget.ListItemID) {
 		nameEntry.Unbind()
+		avatarEntry.Unbind()
 		pronounEntry.Unbind()
-		proxyEntry.Unbind()
 		memberForm.Hidden = false
 		nameEntry.Bind(binding.BindString(&appSettings.Members[i].Name))
 		avatarEntry.Bind(binding.BindString(&appSettings.Members[i].Avatar))
 		avatarEntry.Validator = avatarValidator
 		pronounEntry.Bind(binding.BindString(&appSettings.Members[i].Pronouns))
-		proxyEntry.Bind(binding.BindString(&appSettings.Members[i].Proxy))
+		var avatarURI fyne.URI
+
+		if appSettings.Members[i].Avatar[0] == '/' {
+			avatarURI = storage.NewFileURI(appSettings.Members[i].Avatar)
+		} else {
+			avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), appSettings.Members[i].Avatar))
+		}
+
+		*avatarImage = *canvas.NewImageFromURI(avatarURI)
 	}
 
 	outerRight := container.NewVBox(
@@ -165,18 +202,20 @@ func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
 			list.UpdateItem(list.Length()-1, newItem)
 		}),
 		widget.NewButton("PluralKit Import", func() {
-			PKImport(window)
+			PKImport(app, window, &appSettings.Members)
 		}),
 		widget.NewButton("SimplyPlural Import", func() {
 			fmt.Println("SimplyPlural Import not implemented yet")
 		}),
 	)
 
-	return container.New(
+	tabContainer = container.New(
 		layout.NewFormLayout(),
 		list,
 		outerRight,
 	)
+
+	return tabContainer
 }
 
 func loadSettings(app fyne.App) {
@@ -223,4 +262,8 @@ func loadDefaultAvatar() {
 	}
 
 	defaultAvatar = fyne.NewStaticResource("defaultAvatar", data)
+}
+
+func createSize(size []float32) fyne.Size {
+	return fyne.NewSize(size[0], size[1])
 }
