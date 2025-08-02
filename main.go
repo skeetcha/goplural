@@ -1,38 +1,73 @@
 package main
 
 import (
-	"github.com/skeetcha/goplural/themes"
+	"fmt"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/driver/desktop"
 )
 
-type GoPlural struct {
-	themes []themes.Theme
+type AppSettings struct {
+	Members []Member `json:"members"`
 }
 
 func main() {
-	appData := GoPlural{
-		themes: themes.SetupThemes(),
-	}
-
-	a := app.New()
-	w := a.NewWindow("Hello World")
-	w.Resize(fyne.NewSize(800, 600))
-	w.SetMainMenu(makeMenu(a, w))
-	w.Show()
-	a.Run()
+	app := app.New()
+	mainWindow := app.NewWindow("Hello World")
+	app.Preferences().SetInt("test.four", 4)
+	app.Preferences().SetString("test.five", "five")
+	mainWindow.Resize(fyne.NewSize(800, 600))
+	mainWindow.SetMainMenu(makeMenu(app, mainWindow))
+	mainWindow.Show()
+	app.Run()
+	fmt.Println(app.Preferences())
 }
 
 func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
 	newItem := fyne.NewMenuItem("New", nil)
+	settingsItem := fyne.NewMenuItem("Settings", func() { openSettings(app) })
+
+	settingsShortcut := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyComma,
+		Modifier: fyne.KeyModifierShortcutDefault,
+	}
+
+	settingsItem.Shortcut = settingsShortcut
+	window.Canvas().AddShortcut(settingsShortcut, func(shortcut fyne.Shortcut) {
+		openSettings(app)
+	})
 
 	file := fyne.NewMenu("File", newItem)
+	device := fyne.CurrentDevice()
+
+	if !device.IsMobile() && !device.IsBrowser() {
+		file.Items = append(file.Items, fyne.NewMenuItemSeparator(), settingsItem)
+	}
 
 	main := fyne.NewMainMenu(
 		file,
-		// something else, presumably
 	)
 
 	return main
+}
+
+func openSettings(app fyne.App) {
+	settingsWindow := app.NewWindow("Settings")
+	setting := settings.NewSettings()
+
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Appearance", setting.LoadAppearanceScreen(settingsWindow)),
+		container.NewTabItem("Members", buildMemberSettings(app)),
+	)
+
+	settingsWindow.SetContent(tabs)
+	settingsWindow.Resize(fyne.NewSize(440, 520))
+	settingsWindow.Show()
+}
+
+func buildMemberSettings(app fyne.App) fyne.CanvasObject {
+	return nil
 }
