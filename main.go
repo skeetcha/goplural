@@ -73,7 +73,7 @@ func openSettings(app fyne.App) {
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Appearance", setting.LoadAppearanceScreen(settingsWindow)),
-		container.NewTabItem("Members", buildMemberSettings()),
+		container.NewTabItem("Members", buildMemberSettings(settingsWindow)),
 	)
 
 	settingsWindow.SetContent(tabs)
@@ -81,7 +81,7 @@ func openSettings(app fyne.App) {
 	settingsWindow.Show()
 }
 
-func buildMemberSettings() fyne.CanvasObject {
+func buildMemberSettings(window fyne.Window) fyne.CanvasObject {
 	list := widget.NewList(
 		func() int {
 			return len(appSettings.Members)
@@ -165,7 +165,7 @@ func buildMemberSettings() fyne.CanvasObject {
 			list.UpdateItem(list.Length()-1, newItem)
 		}),
 		widget.NewButton("PluralKit Import", func() {
-			fmt.Println("PluralKit Import not implemented yet")
+			PKImport(window)
 		}),
 		widget.NewButton("SimplyPlural Import", func() {
 			fmt.Println("SimplyPlural Import not implemented yet")
