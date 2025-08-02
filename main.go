@@ -105,19 +105,25 @@ func buildMemberSettings() fyne.CanvasObject {
 	avatarImage.ScaleMode = canvas.ImageScaleFastest
 	avatarImage.SetMinSize(fyne.NewSize(300, 300))
 
+	avatarValidator := func(text string) error {
+		if _, err := os.Stat(text); os.IsNotExist(err) {
+			return errors.New("file does not exist")
+		}
+
+		if storage.NewFileURI(text).MimeType() != "image" {
+			return errors.New("text is not an image")
+		}
+
+		return nil
+	}
+
 	avatarEntry.OnChanged = func(text string) {
+		if err := avatarEntry.Validate(); err != nil {
+			log.Println("Error updating image:", err)
+			return
+		}
+
 		avatarURI := storage.NewFileURI(text)
-
-		if _, err := os.Stat(avatarURI.Path()); os.IsNotExist(err) {
-			avatarEntry.SetValidationError(errors.New("file does not exist"))
-			return
-		}
-
-		if avatarURI.MimeType() != "image" {
-			avatarEntry.SetValidationError(errors.New("text is not an image"))
-			return
-		}
-
 		avatarImage = canvas.NewImageFromURI(avatarURI)
 	}
 
@@ -137,12 +143,12 @@ func buildMemberSettings() fyne.CanvasObject {
 
 	list.OnSelected = func(i widget.ListItemID) {
 		nameEntry.Unbind()
-		avatarEntry.Unbind()
 		pronounEntry.Unbind()
 		proxyEntry.Unbind()
 		memberForm.Hidden = false
 		nameEntry.Bind(binding.BindString(&appSettings.Members[i].Name))
 		avatarEntry.Bind(binding.BindString(&appSettings.Members[i].Avatar))
+		avatarEntry.Validator = avatarValidator
 		pronounEntry.Bind(binding.BindString(&appSettings.Members[i].Pronouns))
 		proxyEntry.Bind(binding.BindString(&appSettings.Members[i].Proxy))
 	}
