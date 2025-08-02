@@ -2,12 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"os"
 	"path"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
@@ -22,11 +25,13 @@ type AppSettings struct {
 }
 
 var appSettings AppSettings
+var defaultAvatar *fyne.StaticResource
 
 func main() {
 	app := app.New()
 	mainWindow := app.NewWindow("GoPlural")
 	loadSettings(app)
+	loadDefaultAvatar()
 	mainWindow.Resize(fyne.NewSize(800, 600))
 	mainWindow.SetMainMenu(makeMenu(app, mainWindow))
 	mainWindow.Show()
@@ -96,6 +101,26 @@ func buildMemberSettings() fyne.CanvasObject {
 	proxyEntry := widget.NewEntry()
 	proxyEntry.SetPlaceHolder("Uses same proxy rules as PluralKit")
 
+	avatarImage := canvas.NewImageFromResource(defaultAvatar)
+	avatarImage.ScaleMode = canvas.ImageScaleFastest
+	avatarImage.SetMinSize(fyne.NewSize(300, 300))
+
+	avatarEntry.OnChanged = func(text string) {
+		avatarURI := storage.NewFileURI(text)
+
+		if _, err := os.Stat(avatarURI.Path()); os.IsNotExist(err) {
+			avatarEntry.SetValidationError(errors.New("file does not exist"))
+			return
+		}
+
+		if avatarURI.MimeType() != "image" {
+			avatarEntry.SetValidationError(errors.New("text is not an image"))
+			return
+		}
+
+		avatarImage = canvas.NewImageFromURI(avatarURI)
+	}
+
 	memberForm := container.New(
 		layout.NewFormLayout(),
 		widget.NewLabel("Name"),
@@ -124,6 +149,7 @@ func buildMemberSettings() fyne.CanvasObject {
 
 	outerRight := container.NewVBox(
 		memberForm,
+		avatarImage,
 		widget.NewButton("Create Member", func() {
 			appSettings.Members = append(appSettings.Members, Member{
 				Name: "New Member",
@@ -180,4 +206,15 @@ func saveSettings(app fyne.App) {
 	if err != nil {
 		log.Println("Error writing config:", err)
 	}
+}
+
+func loadDefaultAvatar() {
+	data, err := os.ReadFile("avatars/default_avatar.png")
+
+	if err != nil {
+		log.Println("Error reading default avatar image:", err)
+		return
+	}
+
+	defaultAvatar = fyne.NewStaticResource("defaultAvatar", data)
 }
