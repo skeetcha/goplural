@@ -24,7 +24,21 @@ type AppSettings struct {
 	Members []Member `json:"members"`
 }
 
+type AppState struct {
+	openScreen     Screen
+	selectedMember int
+}
+
+type Screen int
+
+const (
+	Screen_None Screen = iota
+	Screen_Chat
+	Screen_Dialog
+)
+
 var appSettings AppSettings
+var appState AppState
 var defaultAvatar *fyne.StaticResource
 var avatarSettingsSize []float32
 
@@ -36,9 +50,53 @@ func main() {
 	loadDefaultAvatar()
 	mainWindow.Resize(fyne.NewSize(800, 600))
 	mainWindow.SetMainMenu(makeMenu(app, mainWindow))
+	mainWindow.SetContent(makeChatScreen(app, mainWindow))
 	mainWindow.Show()
 	app.Run()
 	saveSettings(app)
+}
+
+func makeChatScreen(app fyne.App, window fyne.Window) fyne.CanvasObject {
+	memberList := widget.NewList(
+		func() int {
+			return len(appSettings.Members)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("template")
+		},
+		func(id widget.ListItemID, o fyne.CanvasObject) {
+			var avatarURI fyne.URI
+
+			if appSettings.Members[id].Avatar != "" {
+				if appSettings.Members[id].Avatar[0] == '/' {
+					avatarURI = storage.NewFileURI(appSettings.Members[id].Avatar)
+				} else {
+					avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), appSettings.Members[id].Avatar))
+				}
+			}
+
+			o.(*fyne.Container).Objects[0].(*canvas.Image).Image = (*canvas.NewImageFromURI(avatarURI)).Image
+			o.(*fyne.Container).Objects[1].(*widget.Label).Text = appSettings.Members[id].Name
+		},
+	)
+
+	memberList.OnSelected = func(id widget.ListItemID) {
+		appState.selectedMember = id
+	}
+
+	chatContainer := container.New(
+		layout.NewFormLayout(),
+		widget.NewLabel("System Members"),
+		widget.NewLabel("Chat History"),
+		memberList,
+		makeChats(app, window),
+	)
+
+	return chatContainer
+}
+
+func makeChats(app fyne.App, window fyne.Window) fyne.CanvasObject {
+
 }
 
 func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
