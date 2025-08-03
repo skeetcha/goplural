@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"log"
@@ -25,17 +26,9 @@ type AppSettings struct {
 }
 
 type AppState struct {
-	openScreen     Screen
 	selectedMember int
+	db             *sql.DB
 }
-
-type Screen int
-
-const (
-	Screen_None Screen = iota
-	Screen_Chat
-	Screen_Dialog
-)
 
 var appSettings AppSettings
 var appState AppState
@@ -47,6 +40,8 @@ func main() {
 	app := app.New()
 	mainWindow := app.NewWindow("GoPlural")
 	loadSettings(app)
+	loadDatabases(app)
+	defer appState.db.Close()
 	loadDefaultAvatar()
 	mainWindow.Resize(fyne.NewSize(800, 600))
 	mainWindow.SetMainMenu(makeMenu(app, mainWindow))
@@ -96,7 +91,7 @@ func makeChatScreen(app fyne.App, window fyne.Window) fyne.CanvasObject {
 }
 
 func makeChats(app fyne.App, window fyne.Window) fyne.CanvasObject {
-
+	return nil
 }
 
 func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
