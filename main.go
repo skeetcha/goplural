@@ -42,7 +42,6 @@ func main() {
 }
 
 func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
-	newItem := fyne.NewMenuItem("New", nil)
 	settingsItem := fyne.NewMenuItem("Settings", func() { openSettings(app) })
 
 	settingsShortcut := &desktop.CustomShortcut{
@@ -55,7 +54,7 @@ func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
 		openSettings(app)
 	})
 
-	file := fyne.NewMenu("File", newItem)
+	file := fyne.NewMenu("File")
 	device := fyne.CurrentDevice()
 
 	if !device.IsMobile() && !device.IsBrowser() {
