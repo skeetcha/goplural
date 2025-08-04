@@ -57,7 +57,10 @@ func makeChatScreen(app fyne.App, window fyne.Window) fyne.CanvasObject {
 			return len(appSettings.Members)
 		},
 		func() fyne.CanvasObject {
-			return widget.NewLabel("template")
+			return container.NewHBox(
+				canvas.NewImageFromResource(defaultAvatar),
+				widget.NewLabel("template"),
+			)
 		},
 		func(id widget.ListItemID, o fyne.CanvasObject) {
 			var avatarURI fyne.URI
@@ -91,7 +94,7 @@ func makeChatScreen(app fyne.App, window fyne.Window) fyne.CanvasObject {
 }
 
 func makeChats(app fyne.App, window fyne.Window) fyne.CanvasObject {
-	return nil
+	return container.NewVBox()
 }
 
 func makeMenu(app fyne.App, window fyne.Window) *fyne.MainMenu {
