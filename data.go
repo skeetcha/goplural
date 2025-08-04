@@ -7,11 +7,29 @@ import (
 	"log"
 	"os"
 	"path"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
 	SQLMigrations string = `
+	create table members (
+		id integer not null primary key,
+		name text unique not null,
+		pronouns text,
+		avatar_path text,
+		color text,
+		proxy_tags text
+	);
 	
+	create table messages (
+		id integer not null primary key autoincrement,
+		member_id integer not null,
+		message text not null,
+		timestamp text not null,
+		create_at datetime default current_timestamp,
+		foreign key (member_id) references members (id)
+	);
 	`
 )
 
