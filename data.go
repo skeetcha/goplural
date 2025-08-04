@@ -33,7 +33,14 @@ const (
 	`
 )
 
-func loadDatabases(app fyne.App) {
+type ProxyTag struct {
+	Prefix *string `json:"prefix,omitempty"`
+	Suffix *string `json:"suffix,omitempty"`
+}
+
+type Proxies []ProxyTag
+
+func loadDatabases(app fyne.App, state *AppState) {
 	newDb := false
 
 	if _, err := os.Stat(path.Join(app.Storage().RootURI().Path(), "app.db")); os.IsNotExist(err) {
@@ -48,10 +55,10 @@ func loadDatabases(app fyne.App) {
 		return
 	}
 
-	appState.db = db
+	(*state).db = db
 
 	if newDb {
-		_, err = appState.db.Exec(SQLMigrations)
+		_, err = state.db.Exec(SQLMigrations)
 
 		if err != nil {
 			log.Println("Error setting up database:", err)
