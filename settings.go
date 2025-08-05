@@ -56,7 +56,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 			return widget.NewLabel("template")
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
-			res, err := state.db.Query("select name from members where id=" + strconv.Itoa(i+1))
+			res, err := state.db.Query("select name from members where row_id = ?;", i)
 
 			if err != nil {
 				log.Println("Error getting name of member "+strconv.Itoa(i+1)+":", err)
@@ -126,7 +126,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 				return
 			}
 
-			_, err := state.db.Exec("update members set avatar_path = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
+			_, err := state.db.Exec("update members set avatar_path = ? where id = ?", text, state.currentSettingsMember)
 
 			if err != nil {
 				log.Println("Error updating avatar url:", err)
@@ -158,7 +158,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 
 	nameEntry.OnChanged = func(text string) {
 		if state.avatarChangedText {
-			_, err := state.db.Exec("update members set name = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
+			_, err := state.db.Exec("update members set name = ? where id = ?", text, state.currentSettingsMember)
 
 			if err != nil {
 				log.Println("Error updating name:", err)
@@ -169,7 +169,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 
 	pronounEntry.OnChanged = func(text string) {
 		if state.avatarChangedText {
-			_, err := state.db.Exec("update members set pronouns = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
+			_, err := state.db.Exec("update members set pronouns = ? where row_id = ?", text, state.currentSettingsMember)
 
 			if err != nil {
 				log.Println("Error updating pronouns:", err)
@@ -193,10 +193,10 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 	list.OnSelected = func(i widget.ListItemID) {
 		memberForm.Hidden = false
 
-		res, err := state.db.Query("select name, avatar_path, pronouns from members where id=" + strconv.Itoa(i+1))
+		res, err := state.db.Query("select name, avatar_path, pronouns from members where row_id = ?;", i)
 
 		if err != nil {
-			log.Println("Error getting info from member "+strconv.Itoa(i+1)+":", err)
+			log.Printf("Error getting info from member %d: %s", i, err)
 			return
 		}
 
@@ -208,7 +208,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 		err = res.Scan(&name, &avatarUrl, &pronouns)
 
 		if err != nil {
-			log.Println("Error scanning info from member "+strconv.Itoa(i+1)+":", err)
+			log.Printf("Error scanning info from member %d: %s", i, err)
 			return
 		}
 
@@ -277,6 +277,47 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 			avatarImage.Image = (*canvas.NewImageFromResource(state.defaultAvatar)).Image
 			list.Refresh()
 			tabContainer.Refresh()
+
+			res, err := state.db.Query("select id from members")
+
+			if err != nil {
+				log.Println("Error getting list of ids:", err)
+				return
+			}
+
+			index := 0
+			defer res.Close()
+			tx, err := state.db.Begin()
+
+			if err != nil {
+				log.Println("Error beginning a tx:", err)
+				return
+			}
+
+			for res.Next() {
+				var id int
+				err = res.Scan(&id)
+
+				if err != nil {
+					log.Printf("Error getting id for value %d (%s), skipping...", index, err)
+					index += 1
+					continue
+				}
+
+				_, err = tx.Exec("update members set row_id = ? where id = ?;", index, id)
+
+				if err != nil {
+					log.Printf("Error setting id for row %d (%s), skipping...", id, err)
+				}
+
+				index += 1
+			}
+
+			err = tx.Commit()
+
+			if err != nil {
+				log.Println("Error committing tx:", err)
+			}
 		}),
 		widget.NewButton("PluralKit Import", func() {
 			PKImport(app, window, state)
