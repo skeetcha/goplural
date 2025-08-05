@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"log"
 	"os"
@@ -40,6 +41,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 				log.Fatal("Error getting count of members:", err)
 			}
 
+			defer res.Close()
 			res.Next()
 			var result int
 			err = res.Scan(&result)
@@ -54,24 +56,26 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 			return widget.NewLabel("template")
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
-			res, err := state.db.Query("select name from members where id=" + strconv.Itoa(i))
+			res, err := state.db.Query("select name from members where id=" + strconv.Itoa(i+1))
 
 			if err != nil {
-				log.Println("Error getting name of member "+strconv.Itoa(i)+":", err)
+				log.Println("Error getting name of member "+strconv.Itoa(i+1)+":", err)
 				return
 			}
 
+			defer res.Close()
 			res.Next()
 			var name string
 			err = res.Scan(&name)
 
 			if err != nil {
-				log.Println("Error getting name of member "+strconv.Itoa(i)+" (while scanning):", err)
+				log.Println("Error getting name of member "+strconv.Itoa(i+1)+" (while scanning):", err)
 				return
 			}
 
 			o.(*widget.Label).Text = name
 			o.(*widget.Label).Wrapping = fyne.TextWrapBreak
+			o.Refresh()
 		},
 	)
 
@@ -86,6 +90,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 
 	updateImageSize := func() {
 		avatarImage.SetMinSize(state.avatarSettingsSize)
+		canvas.Refresh(avatarImage)
 	}
 
 	updateImageSize()
@@ -121,7 +126,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 				return
 			}
 
-			_, err := state.db.Exec("update members set avatar_url = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember))
+			_, err := state.db.Exec("update members set avatar_path = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
 
 			if err != nil {
 				log.Println("Error updating avatar url:", err)
@@ -137,17 +142,23 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 			avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), text))
 		}
 
-		*avatarImage = *canvas.NewImageFromURI(avatarURI)
-		avatarImage.Refresh()
+		img, err := LoadImage(avatarURI.Path())
+
+		if err != nil {
+			log.Println("Error loading image:", err)
+			return
+		}
+
+		(*avatarImage).Image = img
 		tabContainer.Refresh()
-		state.avatarSettingsSize.Height = (300.0 * float32(avatarImage.Image.Bounds().Max.Y)) / float32(avatarImage.Image.Bounds().Max.X)
+		state.avatarSettingsSize.Height = (300.0 * float32(img.Bounds().Max.Y)) / float32(img.Bounds().Max.X)
 		updateImageSize()
 		state.avatarChangedText = true
 	}
 
 	nameEntry.OnChanged = func(text string) {
 		if state.avatarChangedText {
-			_, err := state.db.Exec("update members set name = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember))
+			_, err := state.db.Exec("update members set name = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
 
 			if err != nil {
 				log.Println("Error updating name:", err)
@@ -158,7 +169,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 
 	pronounEntry.OnChanged = func(text string) {
 		if state.avatarChangedText {
-			_, err := state.db.Exec("update members set pronouns = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember))
+			_, err := state.db.Exec("update members set pronouns = '" + text + "' where id = " + strconv.Itoa(state.currentSettingsMember+1))
 
 			if err != nil {
 				log.Println("Error updating pronouns:", err)
@@ -180,43 +191,59 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 	memberForm.Hidden = true
 
 	list.OnSelected = func(i widget.ListItemID) {
-		nameEntry.Unbind()
-		avatarEntry.Unbind()
-		pronounEntry.Unbind()
 		memberForm.Hidden = false
 
-		res, err := state.db.Query("select name, avatar_url, pronouns from members where id=" + strconv.Itoa(i))
+		res, err := state.db.Query("select name, avatar_path, pronouns from members where id=" + strconv.Itoa(i+1))
 
 		if err != nil {
-			log.Println("Error getting info from member "+strconv.Itoa(i)+":", err)
+			log.Println("Error getting info from member "+strconv.Itoa(i+1)+":", err)
 			return
 		}
 
+		defer res.Close()
 		var name string
-		var avatarUrl string
-		var pronouns string
+		var avatarUrl sql.NullString
+		var pronouns sql.NullString
 		res.Next()
 		err = res.Scan(&name, &avatarUrl, &pronouns)
 
 		if err != nil {
-			log.Println("Error scanning info from member "+strconv.Itoa(i)+":", err)
+			log.Println("Error scanning info from member "+strconv.Itoa(i+1)+":", err)
 			return
 		}
 
 		state.avatarChangedText = false
 		nameEntry.Text = name
-		pronounEntry.Text = pronouns
-		avatarEntry.Text = avatarUrl
+		nameEntry.Refresh()
+		pronounEntry.Text = pronouns.String
+		pronounEntry.Refresh()
+		avatarEntry.Text = avatarUrl.String
 		avatarEntry.Validator = avatarValidator
+		avatarEntry.Refresh()
 		var avatarURI fyne.URI
 
-		if avatarUrl[0] == '/' {
-			avatarURI = storage.NewFileURI(avatarUrl)
-		} else {
-			avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), avatarUrl))
-		}
+		if avatarUrl.Valid {
+			if avatarUrl.String[0] == '/' {
+				avatarURI = storage.NewFileURI(avatarUrl.String)
+			} else {
+				avatarURI = storage.NewFileURI(path.Join(app.Storage().RootURI().Path(), avatarUrl.String))
+			}
 
-		*avatarImage = *canvas.NewImageFromURI(avatarURI)
+			img, err := LoadImage(avatarURI.Path())
+
+			if err != nil {
+				log.Println("Error loading image:", err)
+				return
+			}
+
+			(*avatarImage).Image = img
+			state.avatarSettingsSize.Height = (300.0 * float32(img.Bounds().Max.Y)) / float32(img.Bounds().Max.X)
+			updateImageSize()
+		} else {
+			(*avatarImage).Image = (*canvas.NewImageFromResource(state.defaultAvatar)).Image
+			state.avatarSettingsSize.Height = 300.0
+			updateImageSize()
+		}
 	}
 
 	outerRight := container.NewVBox(

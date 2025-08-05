@@ -91,7 +91,7 @@ func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 			var pronouns string
 			var avatar string
 
-			name = v.Content.Name
+			name = "'" + v.Content.Name + "'"
 			pronouns = createStringValue(v.Content.Pronouns)
 
 			if v.Content.Avatar != nil {
@@ -110,7 +110,7 @@ func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 				continue
 			}
 
-			_, err = state.db.Exec("insert into members(name, pronouns, avatar_url, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '[]')")
+			_, err = state.db.Exec("insert into members(name, pronouns, avatar_path, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '[]')")
 
 			if err != nil {
 				log.Println("Error inserting new member into table:", err)

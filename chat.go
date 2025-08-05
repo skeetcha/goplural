@@ -23,6 +23,7 @@ func makeChatScreen(app fyne.App, window fyne.Window, state *AppState) fyne.Canv
 				log.Fatal("Error getting count of members:", err)
 			}
 
+			defer res.Close()
 			res.Next()
 			var result int
 			err = res.Scan(&result)
@@ -42,13 +43,14 @@ func makeChatScreen(app fyne.App, window fyne.Window, state *AppState) fyne.Canv
 		func(id widget.ListItemID, o fyne.CanvasObject) {
 			var avatarUri fyne.URI
 
-			res, err := state.db.Query("select name, avatar_url from members where id = " + strconv.Itoa(id))
+			res, err := state.db.Query("select name, avatar_path from members where id = " + strconv.Itoa(id))
 
 			if err != nil {
 				log.Println("Error getting avatar url:", err)
 				return
 			}
 
+			defer res.Close()
 			res.Next()
 			var avatarUrl sql.NullString
 			var name string

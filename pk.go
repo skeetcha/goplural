@@ -84,7 +84,7 @@ func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 			var avatar string
 			var proxies string
 
-			name = v.Name
+			name = "'" + v.Name + "'"
 			pronouns = createStringValue(v.Pronouns)
 
 			if v.Avatar != nil {
@@ -107,7 +107,7 @@ func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 
 			proxies = string(data)
 
-			_, err = state.db.Exec("insert into members(name, pronouns, avatar_url, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '" + proxies + "')")
+			_, err = state.db.Exec("insert into members(name, pronouns, avatar_path, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '" + proxies + "')")
 
 			if err != nil {
 				log.Println("Error inserting new member into table:", err)
