@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -57,7 +58,8 @@ func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 		drop table members;
 		
 		create table members (
-			id integer not null primary key,
+			id integer not null primary key autoincrement,
+			row_id integer not null,
 			name text unique not null,
 			pronouns text,
 			avatar_path text,
@@ -70,32 +72,27 @@ func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 			return
 		}
 
-		createStringValue := func(val *string) string {
-			if val == nil {
-				return "null"
-			}
-
-			return "'" + (*val) + "'"
-		}
-
-		for _, v := range members {
+		for i, v := range members {
 			var name string
-			var pronouns string
-			var avatar string
+			var pronouns sql.NullString
+			var avatar sql.NullString
 			var proxies string
 
-			name = "'" + v.Name + "'"
-			pronouns = createStringValue(v.Pronouns)
+			name = v.Name
+
+			if v.Pronouns != nil {
+				pronouns.String = *v.Pronouns
+				pronouns.Valid = true
+			}
 
 			if v.Avatar != nil {
 				uri, err := loadAvatar(*v.Avatar, v.Id, app)
 				time.Sleep(1 * time.Second)
 
 				if err == nil {
-					avatar = "'" + uri + "'"
+					avatar.String = uri
+					avatar.Valid = true
 				}
-			} else {
-				avatar = "null"
 			}
 
 			data, err := json.Marshal(v.ProxyTags)
@@ -107,7 +104,7 @@ func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 
 			proxies = string(data)
 
-			_, err = state.db.Exec("insert into members(name, pronouns, avatar_path, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '" + proxies + "')")
+			_, err = state.db.Exec("insert into members(name, row_id, pronouns, avatar_path, proxy_tags) values(?, ?, ?, ?, ?);", name, i, pronouns, avatar, proxies)
 
 			if err != nil {
 				log.Println("Error inserting new member into table:", err)
