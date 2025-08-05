@@ -16,7 +16,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func PKImport(app fyne.App, parent fyne.Window, memberData *[]Member) {
+func PKImport(app fyne.App, parent fyne.Window, state *AppState) {
 	idEntry := widget.NewEntry()
 	warningLabel := widget.NewLabel("WARNING: This will erase all system data to import from PluralKit. Make sure you know what you're doing before you click confirm.")
 	warningLabel.Wrapping = fyne.TextWrapWord
@@ -53,29 +53,65 @@ func PKImport(app fyne.App, parent fyne.Window, memberData *[]Member) {
 			return
 		}
 
-		(*memberData) = make([]Member, len(members))
+		_, err = state.db.Exec(`
+		drop table members;
+		
+		create table members (
+			id integer not null primary key,
+			name text unique not null,
+			pronouns text,
+			avatar_path text,
+			color text,
+			proxy_tags text
+		);`)
 
-		for i, v := range members {
-			(*memberData)[i].Name = v.Name
+		if err != nil {
+			log.Println("Error clearing members table:", err)
+			return
+		}
 
-			if v.Pronouns != nil {
-				(*memberData)[i].Pronouns = *v.Pronouns
+		createStringValue := func(val *string) string {
+			if val == nil {
+				return "null"
 			}
+
+			return "'" + (*val) + "'"
+		}
+
+		for _, v := range members {
+			var name string
+			var pronouns string
+			var avatar string
+			var proxies string
+
+			name = v.Name
+			pronouns = createStringValue(v.Pronouns)
 
 			if v.Avatar != nil {
 				uri, err := loadAvatar(*v.Avatar, v.Id, app)
 				time.Sleep(1 * time.Second)
 
 				if err == nil {
-					(*memberData)[i].Avatar = uri
+					avatar = "'" + uri + "'"
 				}
+			} else {
+				avatar = "null"
 			}
 
-			(*memberData)[i].Proxy = make([]ProxyTag, len(v.ProxyTags))
+			data, err := json.Marshal(v.ProxyTags)
 
-			for ip, vp := range v.ProxyTags {
-				(*memberData)[i].Proxy[ip].Prefix = vp.Prefix
-				(*memberData)[i].Proxy[ip].Suffix = vp.Suffix
+			if err != nil {
+				log.Println("Error marshaling proxy tags:", err)
+				continue
+			}
+
+			proxies = string(data)
+
+			_, err = state.db.Exec("insert into members(name, pronouns, avatar_url, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '" + proxies + "')")
+
+			if err != nil {
+				log.Println("Error inserting new member into table:", err)
+				continue
 			}
 		}
 

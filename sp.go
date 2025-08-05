@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func SPImport(app fyne.App, parent fyne.Window, memberData *[]Member) {
+func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 	idEntry := widget.NewEntry()
 	tokenEntry := widget.NewEntry()
 	warningLabel := widget.NewLabel("WARNING: This will erase all system data to import from PluralKit. Make sure you know what you're doing before you click confirm.")
@@ -61,22 +61,60 @@ func SPImport(app fyne.App, parent fyne.Window, memberData *[]Member) {
 			return
 		}
 
-		(*memberData) = make([]Member, len(members))
+		_, err = state.db.Exec(`
+		drop table members;
+		
+		create table members (
+			id integer not null primary key,
+			name text unique not null,
+			pronouns text,
+			avatar_path text,
+			color text,
+			proxy_tags text
+		);`)
 
-		for i, v := range members {
-			(*memberData)[i].Name = v.Content.Name
+		if err != nil {
+			log.Println("Error clearing members table:", err)
+			return
+		}
+
+		createStringValue := func(val *string) string {
+			if val == nil {
+				return "null"
+			}
+
+			return "'" + (*val) + "'"
+		}
+
+		for _, v := range members {
+			var name string
+			var pronouns string
+			var avatar string
+
+			name = v.Content.Name
+			pronouns = createStringValue(v.Content.Pronouns)
 
 			if v.Content.Avatar != nil {
 				uri, err := loadAvatar(*v.Content.Avatar, v.Id, app)
 				time.Sleep(1 * time.Second)
 
 				if err == nil {
-					(*memberData)[i].Avatar = uri
+					avatar = "'" + uri + "'"
 				}
+			} else {
+				avatar = "null"
 			}
 
-			if v.Content.Pronouns != nil {
-				(*memberData)[i].Pronouns = *v.Content.Pronouns
+			if err != nil {
+				log.Println("Error marshaling proxy tags:", err)
+				continue
+			}
+
+			_, err = state.db.Exec("insert into members(name, pronouns, avatar_url, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '[]')")
+
+			if err != nil {
+				log.Println("Error inserting new member into table:", err)
+				continue
 			}
 		}
 
