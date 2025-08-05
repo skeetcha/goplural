@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -65,7 +67,8 @@ func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 		drop table members;
 		
 		create table members (
-			id integer not null primary key,
+			id integer not null primary key autoincrement,
+			row_id integer not null,
 			name text unique not null,
 			pronouns text,
 			avatar_path text,
@@ -78,31 +81,26 @@ func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 			return
 		}
 
-		createStringValue := func(val *string) string {
-			if val == nil {
-				return "null"
-			}
-
-			return "'" + (*val) + "'"
-		}
-
-		for _, v := range members {
+		for i, v := range members {
 			var name string
-			var pronouns string
-			var avatar string
+			var pronouns sql.NullString
+			var avatar sql.NullString
 
-			name = "'" + v.Content.Name + "'"
-			pronouns = createStringValue(v.Content.Pronouns)
+			name = v.Content.Name
+
+			if v.Content.Pronouns != nil {
+				pronouns.String = *v.Content.Pronouns
+				pronouns.Valid = true
+			}
 
 			if v.Content.Avatar != nil {
 				uri, err := loadAvatar(*v.Content.Avatar, v.Id, app)
 				time.Sleep(1 * time.Second)
 
 				if err == nil {
-					avatar = "'" + uri + "'"
+					avatar.String = uri
+					avatar.Valid = true
 				}
-			} else {
-				avatar = "null"
 			}
 
 			if err != nil {
@@ -110,7 +108,7 @@ func SPImport(app fyne.App, parent fyne.Window, state *AppState) {
 				continue
 			}
 
-			_, err = state.db.Exec("insert into members(name, pronouns, avatar_path, proxy_tags) values(" + name + ", " + pronouns + ", " + avatar + ", '[]')")
+			_, err = state.db.Exec("insert into members(name, row_id, pronouns, avatar_path, proxy_tags) values(?, ?, ?, ?, [])", name, i, pronouns, avatar)
 
 			if err != nil {
 				log.Println("Error inserting new member into table:", err)
