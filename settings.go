@@ -213,6 +213,7 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 		}
 
 		state.avatarChangedText = false
+		state.currentSettingsMember = i
 		nameEntry.Text = name
 		nameEntry.Refresh()
 		pronounEntry.Text = pronouns.String
@@ -259,6 +260,23 @@ func buildMemberSettings(app fyne.App, window fyne.Window, state *AppState) fyne
 
 			newItem := list.CreateItem()
 			list.UpdateItem(list.Length()-1, newItem)
+		}),
+		widget.NewButton("Remove Member", func() {
+			list.UnselectAll()
+			_, err := state.db.Exec("delete from members where id = ?;", state.currentSettingsMember+1)
+
+			if err != nil {
+				log.Println("Error deleting member:", err)
+				return
+			}
+
+			nameEntry.Text = ""
+			pronounEntry.Text = ""
+			avatarEntry.Text = ""
+			avatarEntry.Validator = nil
+			avatarImage.Image = (*canvas.NewImageFromResource(state.defaultAvatar)).Image
+			list.Refresh()
+			tabContainer.Refresh()
 		}),
 		widget.NewButton("PluralKit Import", func() {
 			PKImport(app, window, state)
