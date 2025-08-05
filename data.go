@@ -14,7 +14,8 @@ import (
 const (
 	SQLMigrations string = `
 	create table members (
-		id integer not null primary key,
+		id integer not null primary key autoincrement,
+		row_id integer not null,
 		name text unique not null,
 		pronouns text,
 		avatar_path text,
