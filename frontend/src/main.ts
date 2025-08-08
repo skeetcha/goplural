@@ -1,49 +1,41 @@
 import './style.css';
 import './app.css';
 
-import logo from './assets/images/logo-universal.png';
-import {Greet} from '../wailsjs/go/main/App';
+window.openSettings = function () {
+    const dialog = document.getElementById("test-dialog") as HTMLDialogElement;
+    dialog.style.opacity = "0";
+    dialog.style.pointerEvents = "auto";
+    dialog.showModal();
 
-// Setup the greet function
-window.greet = function () {
-    // Get name
-    let name = nameElement!.value;
+    requestAnimationFrame(() => {
+        dialog.style.opacity = "1";
+    });
+};
 
-    // Check if the input is empty
-    if (name === "") return;
+window.closeSettings = function () {
+    const dialog = document.getElementById("test-dialog") as HTMLDialogElement;
+    dialog.style.opacity = "0";
+    dialog.style.pointerEvents = "none";
 
-    // Call App.Greet(name)
-    try {
-        Greet(name)
-            .then((result) => {
-                // Update result with data back from App.Greet()
-                resultElement!.innerText = result;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    } catch (err) {
-        console.error(err);
-    }
+    dialog.addEventListener("transitionend", function handler() {
+        dialog.close();
+        dialog.removeEventListener("transitionend", handler);
+        dialog.classList.remove("transitioning");
+        dialog.style.opacity = "";
+        dialog.style.pointerEvents = "";
+    });
 };
 
 document.querySelector('#app')!.innerHTML = `
-    <img id="logo" class="logo">
-      <div class="result" id="result">Please enter your name below 👇</div>
-      <div class="input-box" id="input">
-        <input class="input" id="name" type="text" autocomplete="off" />
-        <button class="btn" onclick="greet()">Greet</button>
-      </div>
-    </div>
+<dialog id="test-dialog">
+    <p>Greetings</p>
+    <button onclick="window.closeSettings()">OK</button>
+</dialog>
 `;
-(document.getElementById('logo') as HTMLImageElement).src = logo;
-
-let nameElement = (document.getElementById("name") as HTMLInputElement);
-nameElement.focus();
-let resultElement = document.getElementById("result");
 
 declare global {
     interface Window {
-        greet: () => void;
+        openSettings: () => void;
+        closeSettings: () => void;
     }
 }

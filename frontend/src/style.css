@@ -24,3 +24,14 @@ body {
     height: 100vh;
     text-align: center;
 }
+
+#test-dialog {
+    transition: opacity 250ms ease-in;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#test-dialog[open] {
+    opacity: 1;
+    pointer-events: auto;
+}

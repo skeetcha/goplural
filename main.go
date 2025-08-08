@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2"
@@ -29,8 +28,7 @@ func main() {
 	fileMenu := appMenu.AddSubmenu("File")
 
 	fileMenu.AddText("Settings", keys.CmdOrCtrl(","), func(_ *menu.CallbackData) {
-		// do something
-		fmt.Println("Test")
+		rt.WindowExecJS(app.ctx, `window.openSettings()`)
 	})
 
 	fileMenu.AddSeparator()
