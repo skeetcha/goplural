@@ -1,0 +1,17 @@
+html.cosmo {
+    --primary: #2780e3;
+    --secondary: #7e8081;
+    --success: #3fb618;
+    --info: #9954bb;
+    --warning: #ff7518;
+    --danger: #ff0039;
+    --light: #f8f9fa;
+    --dark: #373a3c;
+    --bg: #ffffff;
+    --fg: #373a3c;
+    --selectbg: #7e8081;
+    --selectfg: #ffffff;
+    --border: #ced4da;
+    --inputfg: #373a3c;
+    --inputbg: #fdfdfe;
+}

@@ -2,27 +2,18 @@ package main
 
 import (
 	"context"
-	"goplural/themes"
 )
 
 // App struct
 type App struct {
 	ctx          context.Context
-	themes       []themes.Theme
-	currentTheme int
+	currentTheme string
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
 	app := &App{}
-	app.themes = themes.SetupThemes(defaultThemes)
-
-	for i, theme := range app.themes {
-		if theme.Name == "superhero" {
-			app.currentTheme = i
-			break
-		}
-	}
+	app.currentTheme = "superhero"
 
 	return app
 }
@@ -33,8 +24,8 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) GetCurrentTheme() themes.Theme {
-	return a.themes[a.currentTheme]
+func (a *App) GetCurrentTheme() string {
+	return a.currentTheme
 }
 
 func (a *App) GetFAIcon(id string) string {

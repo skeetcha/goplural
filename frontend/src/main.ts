@@ -1,7 +1,7 @@
 import './style.css';
-import './app.css';
+import './themes/cosmo.css';
+import './themes/superhero.css';
 
-import {themes} from '../wailsjs/go/models';
 import {GetFAIcon, GetCurrentTheme} from '../wailsjs/go/main/App';
 
 window.openSettings = function () {
@@ -71,12 +71,12 @@ window.changeTab = (event: Event): void => {
 window.updateTheme = (): void => {
     const r = document.querySelector('html')! as HTMLElement;
     GetCurrentTheme()
-        .then((theme: themes.Theme) => {
-            r.style.setProperty("--bg", `rgba(${theme.colors.bg.R}, ${theme.colors.bg.B}, ${theme.colors.bg.G}, ${theme.colors.bg.A})`);
+        .then((theme: string) => {
+            r.classList.add(theme);
             console.log("Theme has been updated");
         }).catch((err: any) => {
             console.error(err);
-        })
+        });
 }
 
 document.querySelector('#app')!.innerHTML = `
