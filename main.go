@@ -15,6 +15,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed themes/default-themes.json
+var defaultThemes string
+
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
@@ -54,6 +57,9 @@ func main() {
 		Menu:             appMenu,
 		Bind: []interface{}{
 			app,
+		},
+		Debug: options.Debug{
+			OpenInspectorOnStartup: true,
 		},
 	})
 

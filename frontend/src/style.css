@@ -1,7 +1,8 @@
 html {
-    background-color: rgba(27, 38, 54, 1);
+    background-color: var(--bg);
     text-align: center;
     color: white;
+    --bg: rgba(0, 0, 0, 0);
 }
 
 body {
@@ -25,13 +26,51 @@ body {
     text-align: center;
 }
 
-#test-dialog {
-    transition: opacity 250ms ease-in;
+dialog {
+    transition: opacity 150ms ease-in;
     opacity: 0;
     pointer-events: none;
+    padding: 2px;
 }
 
-#test-dialog[open] {
+dialog[open] {
     opacity: 1;
     pointer-events: auto;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+}
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: #ccc;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
 }
