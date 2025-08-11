@@ -1,6 +1,5 @@
 import './style.css';
-import './themes/cosmo.css';
-import './themes/superhero.css';
+import './themes/default-themes';
 
 import {GetFAIcon, GetCurrentTheme} from '../wailsjs/go/main/App';
 
