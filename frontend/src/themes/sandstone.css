@@ -1,0 +1,17 @@
+html.sandstone {
+    --primary: #325d88;
+    --secondary: #8e8c84;
+    --success: #93c54b;
+    --info: #29abe0;
+    --warning: #f47c3c;
+    --danger: #d9534f;
+    --light: #f8f5f0;
+    --dark: #3e3f3a;
+    --bg: #ffffff;
+    --fg: #3e3f3a;
+    --selectbg: #8e8c84;
+    --selectfg: #ffffff;
+    --border: #ced4da;
+    --inputfg: #6e6d69;
+    --inputbg: #ffffff;
+}
