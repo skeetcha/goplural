@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"os"
+	"path"
 )
 
 // App struct
@@ -26,6 +29,127 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) GetCurrentTheme() string {
 	return a.currentTheme
+}
+
+func (a *App) GetCustomThemes() (out map[string]string, err error) {
+	out = make(map[string]string)
+
+	var exe string
+	var oerr error
+
+	if exe, oerr = os.Executable(); oerr != nil {
+		err = oerr
+		return
+	}
+
+	if _, oerr = os.Stat(path.Join(path.Dir(exe), "data")); os.IsNotExist(oerr) {
+		if oerr = os.Mkdir(path.Join(path.Dir(exe), "data"), 0755); oerr != nil {
+			err = oerr
+			return
+		}
+
+		if oerr = os.Mkdir(path.Join(path.Dir(exe), "data", "themes"), 0755); oerr != nil {
+			err = oerr
+			return
+		}
+
+		f, oerr := os.Create(path.Join(path.Dir(exe), "data", "themes", "themes.json"))
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+
+		_, oerr = f.Write([]byte("[]"))
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+
+		oerr = f.Close()
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+	}
+
+	f, oerr := os.Open(path.Join(path.Dir(exe), "data", "themes", "themes.json"))
+
+	if oerr != nil {
+		err = oerr
+		return
+	}
+
+	stats, oerr := os.Stat(f.Name())
+
+	if oerr != nil {
+		err = oerr
+		return
+	}
+
+	themeBData := make([]byte, stats.Size())
+
+	_, oerr = f.Read(themeBData)
+
+	if oerr != nil {
+		err = oerr
+		return
+	}
+
+	oerr = f.Close()
+
+	if oerr != nil {
+		err = oerr
+		return
+	}
+
+	var themes []string
+
+	oerr = json.Unmarshal(themeBData, &themes)
+
+	if oerr != nil {
+		err = oerr
+		return
+	}
+
+	for _, theme := range themes {
+		f, oerr = os.Open(path.Join(path.Dir(exe), "data", "themes", theme+".css"))
+
+		if oerr != nil {
+			err = oerr
+			return
+
+		}
+
+		stats, oerr = os.Stat(f.Name())
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+
+		customData := make([]byte, stats.Size())
+
+		_, oerr = f.Read(customData)
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+
+		oerr = f.Close()
+
+		if oerr != nil {
+			err = oerr
+			return
+		}
+
+		out[theme] = string(customData)
+	}
+
+	return
 }
 
 func (a *App) GetFAIcon(id string) string {

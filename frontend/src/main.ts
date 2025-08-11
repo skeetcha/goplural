@@ -1,7 +1,7 @@
 import './style.css';
 import {defaultThemes} from './themes/default-themes';
 
-import {GetFAIcon, GetCurrentTheme} from '../wailsjs/go/main/App';
+import {GetFAIcon, GetCurrentTheme, GetCustomThemes} from '../wailsjs/go/main/App';
 
 window.openSettings = function () {
     const dialog = document.getElementById("settings-dialog") as HTMLDialogElement;
@@ -98,6 +98,18 @@ document.querySelector('#app')!.innerHTML = `
 `;
 
 window.loadedThemes = defaultThemes;
+
+GetCustomThemes().then((res: Record<string, string>) => {
+    Object.entries(res).forEach((theme: [string, string]) => {
+        const newStyle = document.createElement('style');
+        newStyle.innerText = theme[1];
+        window.loadedThemes.push(theme[0]);
+        console.log('Loaded theme', theme[0]);
+    });
+}).catch((err: any) => {
+    console.error(err);
+})
+
 window.updateTheme();
 
 declare global {
