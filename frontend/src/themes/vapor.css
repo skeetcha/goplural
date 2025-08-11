@@ -1,0 +1,17 @@
+html.vapor {
+    --primary: #6340c0;
+    --secondary: #ea38b8;
+    --success: #3af180;
+    --info: #1da2f2;
+    --warning: #ffbd05;
+    --danger: #e34b54;
+    --light: #44d7e8;
+    --dark: #170229;
+    --bg: #190831;
+    --fg: #32fbe2;
+    --selectbg: #461a8a;
+    --selectfg: #ffffff;
+    --border: #060606;
+    --inputfg: #bfb6cd;
+    --inputbg: #30115e;
+}
