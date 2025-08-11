@@ -1,0 +1,17 @@
+html.minty {
+    --primary: #78c2ad;
+    --secondary: #f3969a;
+    --success: #56cc9d;
+    --info: #6cc3d5;
+    --warning: #ffce67;
+    --danger: #ff7851;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --bg: #ffffff;
+    --fg: #5a5a5a;
+    --selectbg: #f3969a;
+    --selectfg: #ffffff;
+    --border: #ced4da;
+    --inputfg: #696969;
+    --inputbg: #ffffff;
+}
