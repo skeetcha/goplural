@@ -1,0 +1,17 @@
+html.united {
+    --primary: #e95420;
+    --secondary: #aea79f;
+    --success: #38b44a;
+    --info: #17a2b8;
+    --warning: #efb73e;
+    --danger: #df382c;
+    --light: #e9ecef;
+    --dark: #772953;
+    --bg: #ffffff;
+    --fg: #333333;
+    --selectbg: #aea79f;
+    --selectfg: #ffffff;
+    --border: #ced4da;
+    --inputfg: #333333;
+    --inputbg: #ffffff;
+}
