@@ -1,5 +1,5 @@
 import './style.css';
-import './themes/default-themes';
+import {defaultThemes} from './themes/default-themes';
 
 import {GetFAIcon, GetCurrentTheme} from '../wailsjs/go/main/App';
 
@@ -97,6 +97,7 @@ document.querySelector('#app')!.innerHTML = `
 </dialog>
 `;
 
+window.loadedThemes = defaultThemes;
 window.updateTheme();
 
 declare global {
@@ -106,5 +107,6 @@ declare global {
         getFAIcon: (id: string, el: HTMLElement) => void;
         changeTab: (event: Event) => void;
         updateTheme: () => void;
+        loadedThemes: Array<string>;
     }
 }
