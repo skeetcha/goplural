@@ -1,0 +1,17 @@
+html.cerculean {
+    --primary: #4bb1ea;
+    --secondary: #a9b4be;
+    --success: #84b251;
+    --info: #225384;
+    --warning: #e16e25;
+    --danger: #cf3c40;
+    --light: #eceef1;
+    --dark: #33383e;
+    --bg: #ffffff;
+    --fg: #2ea4e7;
+    --selectbg: #abd5bd;
+    --selectfg: #ffffff;
+    --border: #a9b4be;
+    --inputfg: #495057;
+    --inputbg: #ffffff;
+}
