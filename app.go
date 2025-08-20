@@ -31,6 +31,12 @@ func (a *App) GetCurrentTheme() string {
 	return a.currentTheme
 }
 
+func (a *App) SetCurrentTheme(newTheme string) string {
+	oldTheme := a.currentTheme
+	a.currentTheme = newTheme
+	return oldTheme
+}
+
 func (a *App) GetCustomThemes() (out map[string]string, err error) {
 	out = make(map[string]string)
 

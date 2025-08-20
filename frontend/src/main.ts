@@ -1,7 +1,7 @@
 import './style.css';
 import {defaultThemes} from './themes/default-themes';
 
-import {GetFAIcon, GetCurrentTheme, GetCustomThemes} from '../wailsjs/go/main/App';
+import {GetFAIcon, GetCurrentTheme, GetCustomThemes, SetCurrentTheme} from '../wailsjs/go/main/App';
 
 window.openSettings = function () {
     const dialog = document.getElementById("settings-dialog") as HTMLDialogElement;
@@ -86,7 +86,8 @@ document.querySelector('#app')!.innerHTML = `
     </div>
 
     <div id="settings-appearance" class="tabcontent">
-
+        <select id="theme-selector" onchange="window.changeCurrentTheme(event);">
+	</select>
     </div>
 
     <div id="settings-members" class="tabcontent">
@@ -98,6 +99,7 @@ document.querySelector('#app')!.innerHTML = `
 `;
 
 window.loadedThemes = defaultThemes;
+const themeSelector: HTMLSelectElement = document.getElementById('theme-selector') as HTMLSelectElement;
 
 GetCustomThemes().then((res: Record<string, string>) => {
     Object.entries(res).forEach((theme: [string, string]) => {
@@ -108,9 +110,37 @@ GetCustomThemes().then((res: Record<string, string>) => {
     });
 }).catch((err: any) => {
     console.error(err);
-})
+});
 
 window.updateTheme();
+
+window.loadedThemes.forEach((theme) => {
+    const newOption = document.createElement('option') as HTMLOptionElement;
+    newOption.value = theme;
+    newOption.innerText = theme;
+
+    GetCurrentTheme()
+        .then((currentTheme: string) => {
+            if (theme == currentTheme) {
+	        newOption.selected = true;
+	    }
+        }).catch((err: any) => {
+            console.error(err);
+        });
+
+    themeSelector.appendChild(newOption);
+});
+
+window.changeCurrentTheme = (ev: Event) => {
+    const themeTarget = ev.target as HTMLSelectElement;
+    
+    SetCurrentTheme(themeTarget.value)
+        .then((oldTheme: string) => {
+	    const html = document.querySelector('html') as HTMLHtmlElement;
+	    html.classList.remove(oldTheme);
+	    html.classList.add(themeTarget.value);
+	});
+};
 
 declare global {
     interface Window {
@@ -120,5 +150,6 @@ declare global {
         changeTab: (event: Event) => void;
         updateTheme: () => void;
         loadedThemes: Array<string>;
+	changeCurrentTheme: (ev: Event) => void;
     }
 }

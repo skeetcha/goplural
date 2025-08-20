@@ -2,8 +2,6 @@ html {
     background-color: var(--bg);
     text-align: center;
     color: var(--fg);
-    --bg: rgba(0, 0, 0, 0);
-    --fg: rgba(0, 0, 0, 0);
 }
 
 body {
@@ -32,6 +30,9 @@ dialog {
     opacity: 0;
     pointer-events: none;
     padding: 2px;
+    color: var(--fg);
+    background-color: var(--bg);
+    border-color: var(--border);
 }
 
 dialog[open] {
@@ -47,12 +48,16 @@ dialog[open] {
 
 .tab {
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border);
+    background-color: var(--bg);
+    color: var(--fg);
 }
 
 .tab button {
     background-color: inherit;
+    color: inherit;
     float: left;
     border: none;
     outline: none;
@@ -62,7 +67,8 @@ dialog[open] {
 }
 
 .tab button:hover {
-    background-color: #ddd;
+    background-color: var(--fg);
+    color: var(--bg);
 }
 
 .tab button.active {
