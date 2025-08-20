@@ -86,6 +86,7 @@ document.querySelector('#app')!.innerHTML = `
     </div>
 
     <div id="settings-appearance" class="tabcontent">
+        <label for="theme-selector">Theme:</label>
         <select id="theme-selector" onchange="window.changeCurrentTheme(event);">
 	</select>
     </div>
